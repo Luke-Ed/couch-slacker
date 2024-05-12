@@ -6,6 +6,8 @@ plugins {
     id("java-library")
     `maven-publish`
     id("project-report")
+    id("com.diffplug.spotless")
+    id("com.github.ben-manes.versions")
 }
 
 repositories {
