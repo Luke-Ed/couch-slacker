@@ -51,11 +51,13 @@ dependencies {
 group = "com.groocraft"
 version = "2.5.0-SNAPSHOT"
 description = "Couch Slacker"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 java {
     withSourcesJar()
     withJavadocJar()
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
 }
 
 publishing {
