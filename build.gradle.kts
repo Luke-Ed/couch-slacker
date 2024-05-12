@@ -46,6 +46,7 @@ dependencies {
     testImplementation(libs.org.openjdk.jmh.jmh.core)
     testImplementation(libs.org.openjdk.jmh.jmh.generator.annprocess)
     compileOnly(libs.org.projectlombok.lombok)
+    annotationProcessor(libs.org.projectlombok.lombok)
 }
 
 group = "com.groocraft"
