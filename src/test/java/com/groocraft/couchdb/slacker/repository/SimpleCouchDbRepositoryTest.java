@@ -16,9 +16,10 @@
 
 package com.groocraft.couchdb.slacker.repository;
 
-import com.groocraft.couchdb.slacker.CouchDbClient;
-import com.groocraft.couchdb.slacker.exception.CouchDbException;
-import com.groocraft.couchdb.slacker.exception.CouchDbRuntimeException;
+import com.github.luke_ed.couchdb.slacker.repository.SimpleCouchDbRepository;
+import com.github.luke_ed.couchdb.slacker.CouchDbClient;
+import com.github.luke_ed.couchdb.slacker.exception.CouchDbException;
+import com.github.luke_ed.couchdb.slacker.exception.CouchDbRuntimeException;
 import com.groocraft.couchdb.slacker.test.integration.TestDocument;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

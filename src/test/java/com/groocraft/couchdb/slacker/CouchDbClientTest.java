@@ -17,12 +17,13 @@
 package com.groocraft.couchdb.slacker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.groocraft.couchdb.slacker.repository.CouchDbEntityInformation;
-import com.groocraft.couchdb.slacker.structure.DocumentFindRequest;
-import com.groocraft.couchdb.slacker.structure.FindResult;
+import com.github.luke_ed.couchdb.slacker.*;
+import com.github.luke_ed.couchdb.slacker.repository.CouchDbEntityInformation;
+import com.github.luke_ed.couchdb.slacker.structure.DocumentFindRequest;
+import com.github.luke_ed.couchdb.slacker.structure.FindResult;
 import com.groocraft.couchdb.slacker.test.integration.TestDocument;
-import com.groocraft.couchdb.slacker.utils.FindContext;
-import com.groocraft.couchdb.slacker.utils.ThrowingConsumer;
+import com.github.luke_ed.couchdb.slacker.utils.FindContext;
+import com.github.luke_ed.couchdb.slacker.utils.ThrowingConsumer;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;

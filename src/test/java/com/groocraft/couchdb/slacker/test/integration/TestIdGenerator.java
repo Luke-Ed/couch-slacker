@@ -16,7 +16,7 @@
 
 package com.groocraft.couchdb.slacker.test.integration;
 
-import com.groocraft.couchdb.slacker.IdGenerator;
+import com.github.luke_ed.couchdb.slacker.IdGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;

@@ -16,6 +16,7 @@
 
 package com.groocraft.couchdb.slacker.http;
 
+import com.github.luke_ed.couchdb.slacker.http.TrustAllStrategy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

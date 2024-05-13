@@ -16,8 +16,8 @@
 
 package com.groocraft.couchdb.slacker.test.integration.viewed;
 
-import com.groocraft.couchdb.slacker.DocumentBase;
-import com.groocraft.couchdb.slacker.annotation.Document;
+import com.github.luke_ed.couchdb.slacker.DocumentBase;
+import com.github.luke_ed.couchdb.slacker.annotation.Document;
 
 @Document(database = "animal", view = "cat", type = "cat")
 public class ViewedCat extends DocumentBase {

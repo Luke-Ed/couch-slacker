@@ -17,7 +17,7 @@
 package com.groocraft.couchdb.slacker;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.groocraft.couchdb.slacker.annotation.Document;
+import com.github.luke_ed.couchdb.slacker.annotation.Document;
 
 @Document("test")
 public class MethodTestDocument {

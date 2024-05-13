@@ -16,7 +16,10 @@
 
 package com.groocraft.couchdb.slacker;
 
-import com.groocraft.couchdb.slacker.configuration.CouchDbProperties;
+import com.github.luke_ed.couchdb.slacker.CouchDbClient;
+import com.github.luke_ed.couchdb.slacker.CouchDbContext;
+import com.github.luke_ed.couchdb.slacker.SimpleCouchDbContext;
+import com.github.luke_ed.couchdb.slacker.configuration.CouchDbProperties;
 import com.groocraft.couchdb.slacker.test.integration.TestDocument;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

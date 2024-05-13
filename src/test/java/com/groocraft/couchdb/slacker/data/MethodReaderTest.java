@@ -16,7 +16,8 @@
 
 package com.groocraft.couchdb.slacker.data;
 
-import com.groocraft.couchdb.slacker.exception.AccessException;
+import com.github.luke_ed.couchdb.slacker.data.MethodReader;
+import com.github.luke_ed.couchdb.slacker.exception.AccessException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

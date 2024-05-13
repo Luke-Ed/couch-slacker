@@ -16,8 +16,8 @@
 
 package com.groocraft.couchdb.slacker.test.integration.schema;
 
-import com.groocraft.couchdb.slacker.DocumentBase;
-import com.groocraft.couchdb.slacker.annotation.Document;
+import com.github.luke_ed.couchdb.slacker.DocumentBase;
+import com.github.luke_ed.couchdb.slacker.annotation.Document;
 
 @Document(database = "schema-test", view = "schema2", type = "schema2")
 public class OtherSchemaTestDocument extends DocumentBase {

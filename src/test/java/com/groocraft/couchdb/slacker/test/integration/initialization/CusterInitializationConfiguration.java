@@ -16,7 +16,7 @@
 
 package com.groocraft.couchdb.slacker.test.integration.initialization;
 
-import com.groocraft.couchdb.slacker.configuration.CouchSlackerConfiguration;
+import com.github.luke_ed.couchdb.slacker.configuration.CouchSlackerConfiguration;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration

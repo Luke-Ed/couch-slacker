@@ -16,8 +16,8 @@
 
 package com.groocraft.couchdb.slacker.test.integration;
 
-import com.groocraft.couchdb.slacker.CouchDbInitializer;
-import com.groocraft.couchdb.slacker.annotation.EnableCouchDbRepositories;
+import com.github.luke_ed.couchdb.slacker.CouchDbInitializer;
+import com.github.luke_ed.couchdb.slacker.annotation.EnableCouchDbRepositories;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;

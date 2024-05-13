@@ -49,8 +49,8 @@ dependencies {
     annotationProcessor(libs.org.projectlombok.lombok)
 }
 
-group = "com.groocraft"
-version = "2.5.0-SNAPSHOT"
+group = "com.github.Luke-Ed"
+version = "0.0.1-snapshot"
 description = "Couch Slacker"
 
 java {

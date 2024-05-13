@@ -16,10 +16,11 @@
 
 package com.groocraft.couchdb.slacker.repository;
 
-import com.groocraft.couchdb.slacker.CouchDbClient;
-import com.groocraft.couchdb.slacker.DocumentDescriptor;
-import com.groocraft.couchdb.slacker.EntityMetadata;
-import com.groocraft.couchdb.slacker.annotation.ViewQuery;
+import com.github.luke_ed.couchdb.slacker.repository.CouchDbViewQuery;
+import com.github.luke_ed.couchdb.slacker.CouchDbClient;
+import com.github.luke_ed.couchdb.slacker.DocumentDescriptor;
+import com.github.luke_ed.couchdb.slacker.EntityMetadata;
+import com.github.luke_ed.couchdb.slacker.annotation.ViewQuery;
 import com.groocraft.couchdb.slacker.test.integration.TestDocument;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;

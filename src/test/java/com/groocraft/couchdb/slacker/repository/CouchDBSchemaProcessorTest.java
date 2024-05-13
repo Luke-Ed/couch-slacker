@@ -16,16 +16,17 @@
 
 package com.groocraft.couchdb.slacker.repository;
 
-import com.groocraft.couchdb.slacker.CouchDbClient;
-import com.groocraft.couchdb.slacker.CouchDbContext;
-import com.groocraft.couchdb.slacker.DocumentDescriptor;
-import com.groocraft.couchdb.slacker.EntityMetadata;
-import com.groocraft.couchdb.slacker.SchemaOperation;
-import com.groocraft.couchdb.slacker.configuration.CouchDbProperties;
-import com.groocraft.couchdb.slacker.exception.SchemaProcessingException;
+import com.github.luke_ed.couchdb.slacker.repository.CouchDBSchemaProcessor;
+import com.github.luke_ed.couchdb.slacker.CouchDbClient;
+import com.github.luke_ed.couchdb.slacker.CouchDbContext;
+import com.github.luke_ed.couchdb.slacker.DocumentDescriptor;
+import com.github.luke_ed.couchdb.slacker.EntityMetadata;
+import com.github.luke_ed.couchdb.slacker.SchemaOperation;
+import com.github.luke_ed.couchdb.slacker.configuration.CouchDbProperties;
+import com.github.luke_ed.couchdb.slacker.exception.SchemaProcessingException;
 import com.groocraft.couchdb.slacker.repository.schema.SchemaUnitTestDocument;
-import com.groocraft.couchdb.slacker.structure.DesignDocument;
-import com.groocraft.couchdb.slacker.structure.View;
+import com.github.luke_ed.couchdb.slacker.structure.DesignDocument;
+import com.github.luke_ed.couchdb.slacker.structure.View;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

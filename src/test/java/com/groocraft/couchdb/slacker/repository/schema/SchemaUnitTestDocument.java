@@ -18,9 +18,9 @@ package com.groocraft.couchdb.slacker.repository.schema;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.groocraft.couchdb.slacker.DocumentBase;
+import com.github.luke_ed.couchdb.slacker.DocumentBase;
 import com.groocraft.couchdb.slacker.TestDocumentAddress;
-import com.groocraft.couchdb.slacker.annotation.Document;
+import com.github.luke_ed.couchdb.slacker.annotation.Document;
 
 import java.util.List;
 

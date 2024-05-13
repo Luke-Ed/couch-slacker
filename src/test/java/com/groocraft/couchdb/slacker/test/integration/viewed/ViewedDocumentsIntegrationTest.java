@@ -16,8 +16,8 @@
 
 package com.groocraft.couchdb.slacker.test.integration.viewed;
 
-import com.groocraft.couchdb.slacker.CouchDbInitializer;
-import com.groocraft.couchdb.slacker.annotation.EnableCouchDbRepositories;
+import com.github.luke_ed.couchdb.slacker.CouchDbInitializer;
+import com.github.luke_ed.couchdb.slacker.annotation.EnableCouchDbRepositories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

@@ -16,6 +16,7 @@
 
 package com.groocraft.couchdb.slacker.utils;
 
+import com.github.luke_ed.couchdb.slacker.utils.LazyLog;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;

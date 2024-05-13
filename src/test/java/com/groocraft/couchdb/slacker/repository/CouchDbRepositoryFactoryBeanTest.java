@@ -16,8 +16,10 @@
 
 package com.groocraft.couchdb.slacker.repository;
 
-import com.groocraft.couchdb.slacker.CouchDbClient;
-import com.groocraft.couchdb.slacker.configuration.CouchDbProperties;
+import com.github.luke_ed.couchdb.slacker.repository.CouchDbRepositoryFactory;
+import com.github.luke_ed.couchdb.slacker.repository.CouchDbRepositoryFactoryBean;
+import com.github.luke_ed.couchdb.slacker.CouchDbClient;
+import com.github.luke_ed.couchdb.slacker.configuration.CouchDbProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.repository.CrudRepository;
 

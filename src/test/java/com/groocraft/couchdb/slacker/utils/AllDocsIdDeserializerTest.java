@@ -18,7 +18,7 @@ package com.groocraft.couchdb.slacker.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.groocraft.couchdb.slacker.structure.AllDocumentResponse;
+import com.github.luke_ed.couchdb.slacker.structure.AllDocumentResponse;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

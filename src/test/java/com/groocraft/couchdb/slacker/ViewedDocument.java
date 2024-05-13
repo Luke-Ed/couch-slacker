@@ -16,7 +16,8 @@
 
 package com.groocraft.couchdb.slacker;
 
-import com.groocraft.couchdb.slacker.annotation.Document;
+import com.github.luke_ed.couchdb.slacker.DocumentBase;
+import com.github.luke_ed.couchdb.slacker.annotation.Document;
 
 @Document(database = "test", view = "entity", type = "entity")
 public class ViewedDocument extends DocumentBase {

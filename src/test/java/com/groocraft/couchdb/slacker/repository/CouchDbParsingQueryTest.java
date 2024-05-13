@@ -17,13 +17,14 @@
 package com.groocraft.couchdb.slacker.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.groocraft.couchdb.slacker.CouchDbClient;
-import com.groocraft.couchdb.slacker.DocumentDescriptor;
-import com.groocraft.couchdb.slacker.EntityMetadata;
-import com.groocraft.couchdb.slacker.annotation.Index;
-import com.groocraft.couchdb.slacker.exception.CouchDbRuntimeException;
-import com.groocraft.couchdb.slacker.structure.DocumentFindRequest;
-import com.groocraft.couchdb.slacker.structure.FindResult;
+import com.github.luke_ed.couchdb.slacker.repository.CouchDbParsingQuery;
+import com.github.luke_ed.couchdb.slacker.CouchDbClient;
+import com.github.luke_ed.couchdb.slacker.DocumentDescriptor;
+import com.github.luke_ed.couchdb.slacker.EntityMetadata;
+import com.github.luke_ed.couchdb.slacker.annotation.Index;
+import com.github.luke_ed.couchdb.slacker.exception.CouchDbRuntimeException;
+import com.github.luke_ed.couchdb.slacker.structure.DocumentFindRequest;
+import com.github.luke_ed.couchdb.slacker.structure.FindResult;
 import com.groocraft.couchdb.slacker.test.integration.TestDocument;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

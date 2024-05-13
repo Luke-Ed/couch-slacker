@@ -18,10 +18,11 @@ package com.groocraft.couchdb.slacker.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.groocraft.couchdb.slacker.DocumentDescriptor;
-import com.groocraft.couchdb.slacker.EntityMetadata;
+import com.github.luke_ed.couchdb.slacker.utils.FindContext;
+import com.github.luke_ed.couchdb.slacker.DocumentDescriptor;
+import com.github.luke_ed.couchdb.slacker.EntityMetadata;
 import com.groocraft.couchdb.slacker.ViewedDocument;
-import com.groocraft.couchdb.slacker.structure.DocumentFindRequest;
+import com.github.luke_ed.couchdb.slacker.structure.DocumentFindRequest;
 import com.groocraft.couchdb.slacker.test.integration.TestDocument;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Sort;

@@ -16,10 +16,10 @@
 
 package com.groocraft.couchdb.slacker.benchmark;
 
-import com.groocraft.couchdb.slacker.DocumentDescriptor;
-import com.groocraft.couchdb.slacker.EntityMetadata;
+import com.github.luke_ed.couchdb.slacker.DocumentDescriptor;
+import com.github.luke_ed.couchdb.slacker.EntityMetadata;
 import com.groocraft.couchdb.slacker.test.integration.TestDocument;
-import com.groocraft.couchdb.slacker.utils.LazyLog;
+import com.github.luke_ed.couchdb.slacker.utils.LazyLog;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Mode;

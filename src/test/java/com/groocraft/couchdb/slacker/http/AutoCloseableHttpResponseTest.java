@@ -16,6 +16,7 @@
 
 package com.groocraft.couchdb.slacker.http;
 
+import com.github.luke_ed.couchdb.slacker.http.AutoCloseableHttpResponse;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.junit.jupiter.api.Assertions;

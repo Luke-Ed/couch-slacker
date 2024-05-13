@@ -16,8 +16,9 @@
 
 package com.groocraft.couchdb.slacker;
 
-import com.groocraft.couchdb.slacker.annotation.Document;
+import com.github.luke_ed.couchdb.slacker.DocumentBase;
+import com.github.luke_ed.couchdb.slacker.annotation.Document;
 
 @Document(accessByView = true)
-public class DefaultViewedDocument extends DocumentBase{
+public class DefaultViewedDocument extends DocumentBase {
 }

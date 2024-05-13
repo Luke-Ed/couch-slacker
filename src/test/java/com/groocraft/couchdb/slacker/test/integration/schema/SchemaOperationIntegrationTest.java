@@ -16,14 +16,14 @@
 
 package com.groocraft.couchdb.slacker.test.integration.schema;
 
-import com.groocraft.couchdb.slacker.CouchDbClient;
-import com.groocraft.couchdb.slacker.CouchDbInitializer;
-import com.groocraft.couchdb.slacker.DocumentDescriptor;
-import com.groocraft.couchdb.slacker.EntityMetadata;
-import com.groocraft.couchdb.slacker.SchemaOperation;
-import com.groocraft.couchdb.slacker.annotation.EnableCouchDbRepositories;
-import com.groocraft.couchdb.slacker.repository.CouchDBSchemaProcessor;
-import com.groocraft.couchdb.slacker.structure.DesignDocument;
+import com.github.luke_ed.couchdb.slacker.CouchDbClient;
+import com.github.luke_ed.couchdb.slacker.CouchDbInitializer;
+import com.github.luke_ed.couchdb.slacker.DocumentDescriptor;
+import com.github.luke_ed.couchdb.slacker.EntityMetadata;
+import com.github.luke_ed.couchdb.slacker.SchemaOperation;
+import com.github.luke_ed.couchdb.slacker.annotation.EnableCouchDbRepositories;
+import com.github.luke_ed.couchdb.slacker.repository.CouchDBSchemaProcessor;
+import com.github.luke_ed.couchdb.slacker.structure.DesignDocument;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;

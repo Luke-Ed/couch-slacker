@@ -16,9 +16,9 @@
 
 package com.groocraft.couchdb.slacker.test.integration;
 
-import com.groocraft.couchdb.slacker.DocumentBase;
-import com.groocraft.couchdb.slacker.annotation.CustomIdGeneration;
-import com.groocraft.couchdb.slacker.annotation.Document;
+import com.github.luke_ed.couchdb.slacker.DocumentBase;
+import com.github.luke_ed.couchdb.slacker.annotation.CustomIdGeneration;
+import com.github.luke_ed.couchdb.slacker.annotation.Document;
 
 @Document("test")
 @CustomIdGeneration(TestIdGenerator.class)

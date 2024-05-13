@@ -16,7 +16,8 @@
 
 package com.groocraft.couchdb.slacker.http;
 
-import com.groocraft.couchdb.slacker.exception.CouchDbException;
+import com.github.luke_ed.couchdb.slacker.exception.CouchDbException;
+import com.github.luke_ed.couchdb.slacker.http.ThrowingInterceptor;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
