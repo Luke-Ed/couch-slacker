@@ -104,11 +104,11 @@ couchdb:
     initialization-strategy: single
     mapping:
       context1:
-        - entityClass: "com.groocraft.couchdb.slacker.test.integration.TestDocument"
+        - entityClass: "com.github.luke_ed.couchdb.slacker.integration.TestDocument"
           database: "test1"
       context2:
-        - entityClass: "com.groocraft.couchdb.slacker.test.integration.TestDocument"
+        - entityClass: "com.github.luke_ed.couchdb.slacker.integration.TestDocument"
           database: "test2"
       context3:
-        - entityClass: "com.groocraft.couchdb.slacker.test.integration.TestDocument"
+        - entityClass: "com.github.luke_ed.couchdb.slacker.integration.TestDocument"
           database: "test3"
