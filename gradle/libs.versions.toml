@@ -2,32 +2,31 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-ch-qos-logback-logback-classic = "1.2.11"
-com-fasterxml-jackson-core-jackson-annotations = "2.13.3"
-com-fasterxml-jackson-core-jackson-core = "2.13.3"
-com-fasterxml-jackson-core-jackson-databind = "2.13.4.2"
-com-google-code-findbugs-annotations = "3.0.1"
-commons-codec-commons-codec = "1.15"
+ch-qos-logback-logback-classic = "1.5.6"
+com-fasterxml-jackson-core-jackson-annotations = "2.17.1"
+com-fasterxml-jackson-core-jackson-core = "2.17.1"
+com-fasterxml-jackson-core-jackson-databind = "2.17.1"
+com-github-spotbugs-spotbugs-annotations = "4.8.3"
+commons-codec-commons-codec = "1.16.1"
 commons-io-commons-io = "2.11.0"
 org-apache-httpcomponents-httpclient = "4.5.13"
 org-hibernate-validator-hibernate-validator = "7.0.4.Final"
 org-jetbrains-annotations = "23.0.0"
-org-junit-jupiter-junit-jupiter = "5.8.2"
-org-mockito-mockito-inline = "3.2.4"
-org-mockito-mockito-junit-jupiter = "3.2.4"
+org-junit-jupiter-junit-jupiter = "5.10.2"
+org-mockito-mockito-junit-jupiter = "5.11.0"
 org-openjdk-jmh-jmh-core = "1.35"
 org-openjdk-jmh-jmh-generator-annprocess = "1.35"
 org-projectlombok-lombok = "1.18.24"
-org-springframework-boot-spring-boot = "2.7.18"
-org-springframework-boot-spring-boot-autoconfigure = "2.7.18"
-org-springframework-boot-spring-boot-configuration-processor = "2.7.18"
-org-springframework-boot-spring-boot-test = "2.7.18"
-org-springframework-data-spring-data-commons = "2.7.6"
+org-springframework-boot-spring-boot = "3.3.0"
+org-springframework-boot-spring-boot-autoconfigure = "3.3.0"
+org-springframework-boot-spring-boot-configuration-processor = "3.3.0"
+org-springframework-boot-spring-boot-test = "3.3.0"
+org-springframework-data-spring-data-commons = "3.3.0"
 org-springframework-spring-beans = "5.3.24"
 org-springframework-spring-context = "5.3.24"
 org-springframework-spring-test = "5.3.24"
 org-springframework-spring-tx = "5.3.24"
-org-yaml-snakeyaml = "1.33"
+org-yaml-snakeyaml = "2.2"
 
 [libraries]
 ch-qos-logback-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "ch-qos-logback-logback-classic" }
@@ -35,13 +34,13 @@ com-fasterxml-jackson-core-jackson-annotations = { module = "com.fasterxml.jacks
 com-fasterxml-jackson-core-jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "com-fasterxml-jackson-core-jackson-core" }
 com-fasterxml-jackson-core-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "com-fasterxml-jackson-core-jackson-databind" }
 com-google-code-findbugs-annotations = { module = "com.google.code.findbugs:annotations", version.ref = "com-google-code-findbugs-annotations" }
+com-github-spotbugs-spotbugs-annotations =  {module = "com.github.spotbugs:spotbugs-annotations", version.ref = "com-github-spotbugs-spotbugs-annotations"}
 commons-codec-commons-codec = { module = "commons-codec:commons-codec", version.ref = "commons-codec-commons-codec" }
 commons-io-commons-io = { module = "commons-io:commons-io", version.ref = "commons-io-commons-io" }
 org-apache-httpcomponents-httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "org-apache-httpcomponents-httpclient" }
 org-hibernate-validator-hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "org-hibernate-validator-hibernate-validator" }
 org-jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "org-jetbrains-annotations" }
 org-junit-jupiter-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "org-junit-jupiter-junit-jupiter" }
-org-mockito-mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "org-mockito-mockito-inline" }
 org-mockito-mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "org-mockito-mockito-junit-jupiter" }
 org-openjdk-jmh-jmh-core = { module = "org.openjdk.jmh:jmh-core", version.ref = "org-openjdk-jmh-jmh-core" }
 org-openjdk-jmh-jmh-generator-annprocess = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "org-openjdk-jmh-jmh-generator-annprocess" }
