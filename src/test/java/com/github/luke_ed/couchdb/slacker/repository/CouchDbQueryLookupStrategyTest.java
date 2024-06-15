@@ -59,6 +59,7 @@ class CouchDbQueryLookupStrategyTest {
         doReturn(typeInformation).when(repositoryMetadata).getReturnType(method);
         doReturn(TestDocument.class).when(typeInformation).getType();
         doReturn(TestDocument.class).when(repositoryMetadata).getDomainType();
+        doReturn(typeInformation).when(repositoryMetadata).getDomainTypeInformation();
         doReturn(TestDocument.class).when(repositoryMetadata).getReturnedDomainClass(method);
 
         when(namedQueries.hasQuery(any())).thenReturn(false);
@@ -84,6 +85,7 @@ class CouchDbQueryLookupStrategyTest {
         doReturn(typeInformation).when(repositoryMetadata).getReturnType(method);
         doReturn(TestDocument.class).when(typeInformation).getType();
         doReturn(TestDocument.class).when(repositoryMetadata).getDomainType();
+        doReturn(typeInformation).when(repositoryMetadata).getDomainTypeInformation();
         doReturn(TestDocument.class).when(repositoryMetadata).getReturnedDomainClass(method);
         when(namedQueries.hasQuery(any())).thenReturn(false);
 
