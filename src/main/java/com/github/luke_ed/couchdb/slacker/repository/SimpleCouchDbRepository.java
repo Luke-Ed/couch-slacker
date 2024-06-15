@@ -41,7 +41,7 @@ import java.util.Optional;
  * @see CrudRepository
  * @see CouchDbClient
  */
-public class SimpleCouchDbRepository<EntityT> implements PagingAndSortingRepository<EntityT, String> {
+public class SimpleCouchDbRepository<EntityT> implements CrudRepository<EntityT, String>, PagingAndSortingRepository<EntityT, String> {
 
     private final CouchDbClient client;
     private final Class<EntityT> clazz;
