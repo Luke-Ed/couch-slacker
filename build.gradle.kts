@@ -33,12 +33,11 @@ dependencies {
     api(libs.com.fasterxml.jackson.core.jackson.annotations)
     api(libs.com.fasterxml.jackson.core.jackson.databind)
     api(libs.org.hibernate.validator.hibernate.validator)
-    api(libs.com.google.code.findbugs.annotations)
+    api(libs.com.github.spotbugs.spotbugs.annotations)
     api(libs.org.springframework.boot.spring.boot.configuration.processor)
     api(libs.org.jetbrains.annotations)
     testImplementation(libs.org.junit.jupiter.junit.jupiter)
     testImplementation(libs.org.mockito.mockito.junit.jupiter)
-    testImplementation(libs.org.mockito.mockito.inline)
     testImplementation(libs.commons.io.commons.io)
     testImplementation(libs.org.springframework.boot.spring.boot.test)
     testImplementation(libs.org.springframework.spring.test)
@@ -58,7 +57,7 @@ java {
     withSourcesJar()
     withJavadocJar()
     toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
