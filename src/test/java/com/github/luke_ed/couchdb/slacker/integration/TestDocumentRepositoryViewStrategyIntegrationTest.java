@@ -16,10 +16,12 @@
 
 package com.github.luke_ed.couchdb.slacker.integration;
 
+import com.github.luke_ed.couchdb.slacker.CouchDbClient;
 import com.github.luke_ed.couchdb.slacker.CouchDbInitializer;
 import com.github.luke_ed.couchdb.slacker.annotation.EnableCouchDbRepositories;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,4 +34,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles("test-view-strategy")
 @EnableCouchDbRepositories
 public class TestDocumentRepositoryViewStrategyIntegrationTest extends TestDocumentRepositoryBase {
+    @Autowired
+    public TestDocumentRepositoryViewStrategyIntegrationTest(CouchDbClient couchDbClient, TestDocumentRepository testDocumentRepository) {
+        super(couchDbClient, testDocumentRepository);
+    }
 }

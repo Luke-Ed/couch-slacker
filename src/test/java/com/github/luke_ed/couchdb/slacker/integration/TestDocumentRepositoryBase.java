@@ -62,23 +62,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TestDocumentRepositoryBase {
 
     @Autowired
-    CouchDbClient client;
+    public TestDocumentRepositoryBase(CouchDbClient couchDbClient, TestDocumentRepository testDocumentRepository) {
+        this.couchDbClient = couchDbClient;
+        this.testDocumentRepository = testDocumentRepository;
+    }
+    CouchDbClient couchDbClient;
 
-    @Autowired
-    TestDocumentRepository repository;
+    TestDocumentRepository testDocumentRepository;
 
     @BeforeEach
     void clear() {
-        repository.deleteAll();
+        testDocumentRepository.deleteAll();
     }
 
     @Test
     void testSaveNewAndRead() {
         String randomValue = UUID.randomUUID().toString();
-        TestDocument saved = repository.save(new TestDocument(randomValue));
+        TestDocument saved = testDocumentRepository.save(new TestDocument(randomValue));
         assertNotNull(saved.getId(), "Id must be present after save");
         assertNotNull(saved.getRevision(), "Revision must be resent after save");
-        Optional<TestDocument> read = repository.findById(saved.getId());
+        Optional<TestDocument> read = testDocumentRepository.findById(saved.getId());
         assertTrue(read.isPresent(), "It must be possible to read document created few lines above");
         assertEquals(randomValue, read.get().getValue(), "Values must match if the same document read");
     }
@@ -86,13 +89,13 @@ class TestDocumentRepositoryBase {
     @Test
     void testSaveAndUpdate() {
         String randomValue = UUID.randomUUID().toString();
-        TestDocument saved = repository.save(new TestDocument(randomValue));
+        TestDocument saved = testDocumentRepository.save(new TestDocument(randomValue));
         assertNotNull(saved.getId(), "Id must be present after save");
         assertNotNull(saved.getRevision(), "Revision must be resent after save");
         String newRandomValue = UUID.randomUUID().toString();
         saved.setValue(newRandomValue);
-        saved = repository.save(saved);
-        Optional<TestDocument> read = repository.findById(saved.getId());
+        saved = testDocumentRepository.save(saved);
+        Optional<TestDocument> read = testDocumentRepository.findById(saved.getId());
         assertTrue(read.isPresent(), "It must be possible to read document created few lines above");
         assertEquals(newRandomValue, read.get().getValue(), "Values must match if the same document read");
     }
@@ -100,23 +103,23 @@ class TestDocumentRepositoryBase {
     @Test
     void testSaveNewAndDeleteById() {
         String randomValue = UUID.randomUUID().toString();
-        TestDocument saved = repository.save(new TestDocument(randomValue));
+        TestDocument saved = testDocumentRepository.save(new TestDocument(randomValue));
         assertNotNull(saved.getId(), "Id must be present after save");
         assertNotNull(saved.getRevision(), "Revision must be present after save");
-        repository.deleteById(saved.getId());
-        assertFalse(repository.existsById(saved.getId()), "Database must be empty because created document was deleted");
+        testDocumentRepository.deleteById(saved.getId());
+        assertFalse(testDocumentRepository.existsById(saved.getId()), "Database must be empty because created document was deleted");
     }
 
     @Test
     void testSaveNewAndUpdateAndRead() {
         String randomValue = UUID.randomUUID().toString();
-        TestDocument saved = repository.save(new TestDocument(randomValue));
+        TestDocument saved = testDocumentRepository.save(new TestDocument(randomValue));
         assertNotNull(saved.getId(), "Id must be present after save");
         assertNotNull(saved.getRevision(), "Revision must be resent after save");
         String newValue = UUID.randomUUID().toString();
         TestDocument altered = new TestDocument(saved.getId(), saved.getRevision(), newValue, saved.getValue2());
-        repository.save(altered);
-        Optional<TestDocument> read = repository.findById(saved.getId());
+        testDocumentRepository.save(altered);
+        Optional<TestDocument> read = testDocumentRepository.findById(saved.getId());
         assertTrue(read.isPresent(), "It must be possible to read document created few lines above");
         assertEquals(newValue, read.get().getValue(), "Values must match if the same document read");
     }
@@ -126,7 +129,7 @@ class TestDocumentRepositoryBase {
     void testSavingAll(int amount) {
         List<TestDocument> all = new LinkedList<>();
         IntStream.range(1, amount + 1).forEach(i -> all.add(new TestDocument("value" + i, "value2" + i)));
-        Iterable<TestDocument> saved = repository.saveAll(all);
+        Iterable<TestDocument> saved = testDocumentRepository.saveAll(all);
         assertEquals(amount, StreamSupport.stream(saved.spliterator(), false).count(), "All given entities must be saved");
         AtomicInteger i = new AtomicInteger(1);
         StreamSupport.stream(saved.spliterator(), false).forEach(s -> {
@@ -136,13 +139,13 @@ class TestDocumentRepositoryBase {
             assertEquals("value2" + i.getAndIncrement(), s.getValue2(), "Value of entity is not matching. Order or data of entities is messed up");
         });
         assertEquals(amount,
-                StreamSupport.stream(repository.findAllById(StreamSupport.stream(saved.spliterator(), false).map(TestDocument::getId).collect(Collectors.toList())).spliterator(), false).count(),
+                StreamSupport.stream(testDocumentRepository.findAllById(StreamSupport.stream(saved.spliterator(), false).map(TestDocument::getId).collect(Collectors.toList())).spliterator(), false).count(),
                 "One or more of passed entities was not truly saved");
     }
 
     @Test
     void testExistsByIdNonExisting() {
-        assertFalse(repository.existsById("NonExisting"), "False must be returned when id does not exists");
+        assertFalse(testDocumentRepository.existsById("NonExisting"), "False must be returned when id does not exists");
     }
 
     @ParameterizedTest()
@@ -150,9 +153,9 @@ class TestDocumentRepositoryBase {
     void testFindAllById(int amount) {
         List<TestDocument> all = new LinkedList<>();
         IntStream.range(1, amount + 1).forEach(i -> all.add(new TestDocument("value" + i, "value2" + i)));
-        Iterable<TestDocument> saved = repository.saveAll(all);
+        Iterable<TestDocument> saved = testDocumentRepository.saveAll(all);
         List<TestDocument> found = new LinkedList<>();
-        repository.findAllById(StreamSupport.stream(saved.spliterator(), false).map(TestDocument::getId).collect(Collectors.toList())).forEach(found::add);
+        testDocumentRepository.findAllById(StreamSupport.stream(saved.spliterator(), false).map(TestDocument::getId).collect(Collectors.toList())).forEach(found::add);
 
         saved.forEach(s -> assertTrue(found.stream().anyMatch(s::equals), "One of saved not found"));
     }
@@ -161,34 +164,34 @@ class TestDocumentRepositoryBase {
     void testFindAllByIdWithNonExisting() {
         List<String> all = Collections.singletonList("nonExisting");
         Iterable<TestDocument> found =
-                assertDoesNotThrow(() -> repository.findAllById(all), "Exception must not be thrown when one of wanted ids does not exist");
+                assertDoesNotThrow(() -> testDocumentRepository.findAllById(all), "Exception must not be thrown when one of wanted ids does not exist");
         assertEquals(0, StreamSupport.stream(found.spliterator(), false).count(), "For non existing id, no entity should be returned");
     }
 
     @Test
     void testReadingNonExisting() {
-        Optional<TestDocument> read = assertDoesNotThrow(() -> repository.findById("nonExisting"), "Exception must not be thrown cause of non existing id");
+        Optional<TestDocument> read = assertDoesNotThrow(() -> testDocumentRepository.findById("nonExisting"), "Exception must not be thrown cause of non existing id");
         assertFalse(read.isPresent(), "No entity can be present if the id not exists in the DB");
     }
 
     @Test
     void testDeletingByIdNonExisting() {
-        assertThrows(CouchDbRuntimeException.class, () -> repository.deleteById("nonExisting"), "Exception must be thrown when id does not exist");
+        assertThrows(CouchDbRuntimeException.class, () -> testDocumentRepository.deleteById("nonExisting"), "Exception must be thrown when id does not exist");
     }
 
     @Test
     void testDeletingNonExisting() {
         TestDocument document = new TestDocument("nonExisting", "1", "empty");
-        assertThrows(CouchDbRuntimeException.class, () -> repository.delete(document), "Exception must be thrown when id of given entity does not exist");
+        assertThrows(CouchDbRuntimeException.class, () -> testDocumentRepository.delete(document), "Exception must be thrown when id of given entity does not exist");
     }
 
     @ParameterizedTest()
     @ValueSource(ints = {10, 1000})
     void testSaveAllAndCountAndDeleteAll(int amount) {
-        repository.deleteAll();
+        testDocumentRepository.deleteAll();
         List<TestDocument> all = new LinkedList<>();
         IntStream.range(1, amount + 1).forEach(i -> all.add(new TestDocument("value" + i, "value2" + i)));
-        Iterable<TestDocument> saved = repository.saveAll(all);
+        Iterable<TestDocument> saved = testDocumentRepository.saveAll(all);
         assertEquals(amount, StreamSupport.stream(saved.spliterator(), false).count(), "Must be saved all given entities");
         AtomicInteger i = new AtomicInteger(1);
         StreamSupport.stream(saved.spliterator(), false).forEach(s -> {
@@ -196,18 +199,18 @@ class TestDocumentRepositoryBase {
             assertNotNull(s.getRevision(), "All saved entities must contain revision");
             assertEquals("value" + i.get(), s.getValue(), "Value of entity is not matching. Order or data of entities is messed up");
             assertEquals("value2" + i.getAndIncrement(), s.getValue2(), "Value of entity is not matching. Order or data of entities is messed up");
-            assertTrue(repository.existsById(s.getId()), "One of passed entities was not truly saved");
+            assertTrue(testDocumentRepository.existsById(s.getId()), "One of passed entities was not truly saved");
         });
-        assertEquals(amount, repository.count(), "There must be only 20 entities in BD now");
-        repository.deleteAll();
-        assertEquals(0, repository.count(), "DB must be empty now");
+        assertEquals(amount, testDocumentRepository.count(), "There must be only 20 entities in BD now");
+        testDocumentRepository.deleteAll();
+        assertEquals(0, testDocumentRepository.count(), "DB must be empty now");
     }
 
     @Test
     void testQueryBased() {
         String randomValue = UUID.randomUUID().toString();
-        TestDocument saved = repository.save(new TestDocument(null, null, randomValue));
-        List<TestDocument> read = repository.queryBased(randomValue);
+        TestDocument saved = testDocumentRepository.save(new TestDocument(null, null, randomValue));
+        List<TestDocument> read = testDocumentRepository.queryBased(randomValue);
         assertNotNull(read, "Returned list must not be null");
         assertEquals(1, read.size(), "Returned list must contain only the document we have created");
         assertEquals(randomValue, read.get(0).getValue(), "We get different document we wanted");
@@ -217,8 +220,8 @@ class TestDocumentRepositoryBase {
     @Test
     void testQueryBasedWithNamed() {
         String randomValue = UUID.randomUUID().toString();
-        TestDocument saved = repository.save(new TestDocument(null, null, randomValue));
-        List<TestDocument> read = repository.queryBasedWithNamed(randomValue);
+        TestDocument saved = testDocumentRepository.save(new TestDocument(null, null, randomValue));
+        List<TestDocument> read = testDocumentRepository.queryBasedWithNamed(randomValue);
         assertNotNull(read, "Returned list must not be null");
         assertEquals(1, read.size(), "Returned list must contain only the document we have created");
         assertEquals(randomValue, read.get(0).getValue(), "We get different document we wanted");
@@ -229,9 +232,9 @@ class TestDocumentRepositoryBase {
     void testFindByValueAndValue2() {
         String randomValue = UUID.randomUUID().toString();
         String randomValue2 = UUID.randomUUID().toString();
-        repository.save(new TestDocument(null, null, randomValue2, "theSame"));
-        TestDocument saved = repository.save(new TestDocument(null, null, randomValue, "theSame"));
-        List<TestDocument> read = repository.findByValueAndValue2(randomValue, "theSame");
+        testDocumentRepository.save(new TestDocument(null, null, randomValue2, "theSame"));
+        TestDocument saved = testDocumentRepository.save(new TestDocument(null, null, randomValue, "theSame"));
+        List<TestDocument> read = testDocumentRepository.findByValueAndValue2(randomValue, "theSame");
         assertEquals(1, read.size(), "Returned list must contain only the document we have created");
         assertEquals(randomValue, read.get(0).getValue(), "We get different document we wanted");
         assertEquals(saved.getId(), read.get(0).getId(), "We have to get the original document");
@@ -241,9 +244,9 @@ class TestDocumentRepositoryBase {
     void testExistsByValueAndValue2() {
         String randomValue = UUID.randomUUID().toString();
         String randomValue2 = UUID.randomUUID().toString();
-        repository.save(new TestDocument(null, null, randomValue2, "theSame"));
-        TestDocument saved = repository.save(new TestDocument(null, null, randomValue, "theSame"));
-        boolean exists = repository.existsByValueAndValue2(randomValue, "theSame");
+        testDocumentRepository.save(new TestDocument(null, null, randomValue2, "theSame"));
+        TestDocument saved = testDocumentRepository.save(new TestDocument(null, null, randomValue, "theSame"));
+        boolean exists = testDocumentRepository.existsByValueAndValue2(randomValue, "theSame");
         assertTrue(exists, "Document must exist because we have created it");
     }
 
@@ -251,9 +254,9 @@ class TestDocumentRepositoryBase {
     void testCountByValueAndValue2() {
         String randomValue = UUID.randomUUID().toString();
         String randomValue2 = UUID.randomUUID().toString();
-        repository.save(new TestDocument(null, null, randomValue2, "theSame"));
-        TestDocument saved = repository.save(new TestDocument(null, null, randomValue, "theSame"));
-        int count = repository.countByValueAndValue2(randomValue, "theSame");
+        testDocumentRepository.save(new TestDocument(null, null, randomValue2, "theSame"));
+        TestDocument saved = testDocumentRepository.save(new TestDocument(null, null, randomValue, "theSame"));
+        int count = testDocumentRepository.countByValueAndValue2(randomValue, "theSame");
         assertEquals(1, count, "Exactly one document exists with the wanted value");
     }
 
@@ -261,10 +264,10 @@ class TestDocumentRepositoryBase {
     void testDeleteByValueAndValue2() {
         String randomValue = UUID.randomUUID().toString();
         String randomValue2 = UUID.randomUUID().toString();
-        repository.save(new TestDocument(null, null, randomValue2, "theSame"));
-        TestDocument saved = repository.save(new TestDocument(null, null, randomValue, "theSame"));
-        repository.deleteByValueAndValue2(randomValue, "theSame");
-        Optional<TestDocument> nonExisting = repository.findById(saved.getId());
+        testDocumentRepository.save(new TestDocument(null, null, randomValue2, "theSame"));
+        TestDocument saved = testDocumentRepository.save(new TestDocument(null, null, randomValue, "theSame"));
+        testDocumentRepository.deleteByValueAndValue2(randomValue, "theSame");
+        Optional<TestDocument> nonExisting = testDocumentRepository.findById(saved.getId());
         assertFalse(nonExisting.isPresent(), "Document should be deleted by now");
     }
 
@@ -272,9 +275,9 @@ class TestDocumentRepositoryBase {
     void testFindByValueIsNot() {
         String randomValue = UUID.randomUUID().toString();
         String randomValue2 = UUID.randomUUID().toString();
-        repository.save(new TestDocument(null, null, randomValue2, "theSame"));
-        TestDocument saved = repository.save(new TestDocument(null, null, randomValue, "theSame"));
-        List<TestDocument> read = repository.findByValueIsNot(randomValue2);
+        testDocumentRepository.save(new TestDocument(null, null, randomValue2, "theSame"));
+        TestDocument saved = testDocumentRepository.save(new TestDocument(null, null, randomValue, "theSame"));
+        List<TestDocument> read = testDocumentRepository.findByValueIsNot(randomValue2);
         assertEquals(1, read.size(), "Returned list must contain only the document we have created");
         assertEquals(randomValue, read.get(0).getValue(), "We get different document we wanted");
         assertEquals(saved.getId(), read.get(0).getId(), "We have to get the original document");
@@ -282,8 +285,8 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValue3GreaterThan() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument(i)));
-        List<TestDocument> read = repository.findByValue3GreaterThan(4);
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument(i)));
+        List<TestDocument> read = testDocumentRepository.findByValue3GreaterThan(4);
         assertEquals(6, read.size(), "Returned list must contain documents with value3 from 5 from 10");
         for (TestDocument d : read) {
             assertTrue(d.getValue3() > 4, "We requested only document with value3 greater 4");
@@ -292,8 +295,8 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValue3GreaterThanEquals() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument(i)));
-        List<TestDocument> read = repository.findByValue3GreaterThanEqual(4);
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument(i)));
+        List<TestDocument> read = testDocumentRepository.findByValue3GreaterThanEqual(4);
         assertEquals(7, read.size(), "Returned list must contain documents with value3 from  4 from 10");
         for (TestDocument d : read) {
             assertTrue(d.getValue3() >= 4, "We requested only document with value3 greater or equal to 4");
@@ -302,8 +305,8 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValue3LessThan() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument(i)));
-        List<TestDocument> read = repository.findByValue3LessThan(7);
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument(i)));
+        List<TestDocument> read = testDocumentRepository.findByValue3LessThan(7);
         assertEquals(6, read.size(), "Returned list must contain documents with value3 from  1 from 6");
         for (TestDocument d : read) {
             assertTrue(d.getValue3() < 7, "We requested only document with value3 lesser than 7");
@@ -312,8 +315,8 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValue3LessThanEquals() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument(i)));
-        List<TestDocument> read = repository.findByValue3LessThanEqual(7);
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument(i)));
+        List<TestDocument> read = testDocumentRepository.findByValue3LessThanEqual(7);
         assertEquals(7, read.size(), "Returned list must contain documents with value3 from  1 from 7");
         for (TestDocument d : read) {
             assertTrue(d.getValue3() <= 7, "We requested only document with value3 lesser than or equal to 7");
@@ -322,8 +325,8 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValueRegex() {
-        IntStream.range(1, 21).forEach(i -> repository.save(new TestDocument("value" + i)));
-        List<TestDocument> read = repository.findByValueRegex("^value1");
+        IntStream.range(1, 21).forEach(i -> testDocumentRepository.save(new TestDocument("value" + i)));
+        List<TestDocument> read = testDocumentRepository.findByValueRegex("^value1");
         assertEquals(11, read.size(), "Returned list must contain only document with value starting with value1");
         for (TestDocument d : read) {
             assertTrue(d.getValue().startsWith("value1"), "We requested only document with value starting with value1");
@@ -332,9 +335,9 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValue2Null() {
-        IntStream.range(10, 20).forEach(i -> repository.save(new TestDocument("value" + i)));
-        IntStream.range(20, 30).forEach(i -> repository.save(new TestDocument("value" + i, "value2" + i)));
-        List<TestDocument> read = repository.findByValue2Null();
+        IntStream.range(10, 20).forEach(i -> testDocumentRepository.save(new TestDocument("value" + i)));
+        IntStream.range(20, 30).forEach(i -> testDocumentRepository.save(new TestDocument("value" + i, "value2" + i)));
+        List<TestDocument> read = testDocumentRepository.findByValue2Null();
         assertEquals(10, read.size(), "Returned list must contain only document with value starting with value1");
         for (TestDocument d : read) {
             assertTrue(d.getValue().startsWith("value1"), "We requested only document with value2 null");
@@ -343,9 +346,9 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValue2NotNull() {
-        IntStream.range(10, 20).forEach(i -> repository.save(new TestDocument("value" + i)));
-        IntStream.range(20, 30).forEach(i -> repository.save(new TestDocument("value" + i, "value2" + i)));
-        List<TestDocument> read = repository.findByValue2NotNull();
+        IntStream.range(10, 20).forEach(i -> testDocumentRepository.save(new TestDocument("value" + i)));
+        IntStream.range(20, 30).forEach(i -> testDocumentRepository.save(new TestDocument("value" + i, "value2" + i)));
+        List<TestDocument> read = testDocumentRepository.findByValue2NotNull();
         assertEquals(10, read.size(), "Returned list must contain only document with value starting with value1");
         for (TestDocument d : read) {
             assertTrue(d.getValue().startsWith("value2"), "We requested only document with value2 null");
@@ -354,8 +357,8 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValue3Before() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument(i)));
-        List<TestDocument> read = repository.findByValue3Before(7);
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument(i)));
+        List<TestDocument> read = testDocumentRepository.findByValue3Before(7);
         assertEquals(6, read.size(), "Returned list must contain documents with value3 from  1 from 6");
         for (TestDocument d : read) {
             assertTrue(d.getValue3() < 7, "We requested only document with value3 lesser than 7");
@@ -364,8 +367,8 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValue3After() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument(i)));
-        List<TestDocument> read = repository.findByValue3After(4);
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument(i)));
+        List<TestDocument> read = testDocumentRepository.findByValue3After(4);
         assertEquals(6, read.size(), "Returned list must contain documents with value3 from 5 from 10");
         for (TestDocument d : read) {
             assertTrue(d.getValue3() > 4, "We requested only document with value3 greater 4");
@@ -374,8 +377,8 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValueStartingWith() {
-        IntStream.range(1, 21).forEach(i -> repository.save(new TestDocument("value" + i)));
-        List<TestDocument> read = repository.findByValueStartingWith("value1");
+        IntStream.range(1, 21).forEach(i -> testDocumentRepository.save(new TestDocument("value" + i)));
+        List<TestDocument> read = testDocumentRepository.findByValueStartingWith("value1");
         assertEquals(11, read.size(), "Returned list must contain only document with value starting with value1");
         for (TestDocument d : read) {
             assertTrue(d.getValue().startsWith("value1"), "We requested only document with value starting with value1");
@@ -384,8 +387,8 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValueEndingWith() {
-        IntStream.range(1, 21).forEach(i -> repository.save(new TestDocument("value" + i)));
-        List<TestDocument> read = repository.findByValueEndingWith("2");
+        IntStream.range(1, 21).forEach(i -> testDocumentRepository.save(new TestDocument("value" + i)));
+        List<TestDocument> read = testDocumentRepository.findByValueEndingWith("2");
         assertEquals(2, read.size(), "Returned list must contain only document with value ending with 2");
         for (TestDocument d : read) {
             assertTrue(d.getValue().endsWith("2"), "We requested only document with value ending with 2");
@@ -394,9 +397,9 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValue4Empty() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument(Collections.singletonList("value" + i))));
-        IntStream.range(1, 6).forEach(i -> repository.save(new TestDocument(Collections.emptyList())));
-        List<TestDocument> read = repository.findByValue4Empty();
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument(Collections.singletonList("value" + i))));
+        IntStream.range(1, 6).forEach(i -> testDocumentRepository.save(new TestDocument(Collections.emptyList())));
+        List<TestDocument> read = testDocumentRepository.findByValue4Empty();
         assertEquals(5, read.size(), "Returned list must contain only document with empty value4");
         for (TestDocument d : read) {
             assertTrue(d.getValue4().isEmpty(), "We requested only documents with empty value4");
@@ -405,9 +408,9 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValue4NotEmpty() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument(Collections.singletonList("value" + i))));
-        IntStream.range(1, 6).forEach(i -> repository.save(new TestDocument(Collections.emptyList())));
-        List<TestDocument> read = repository.findByValue4NotEmpty();
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument(Collections.singletonList("value" + i))));
+        IntStream.range(1, 6).forEach(i -> testDocumentRepository.save(new TestDocument(Collections.emptyList())));
+        List<TestDocument> read = testDocumentRepository.findByValue4NotEmpty();
         assertEquals(10, read.size(), "Returned list must contain only document with empty value4");
         for (TestDocument d : read) {
             assertFalse(d.getValue4().isEmpty(), "We requested only documents with empty value4");
@@ -416,9 +419,9 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValueContaining() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument("value" + i)));
-        IntStream.range(1, 6).forEach(i -> repository.save(new TestDocument()));
-        List<TestDocument> read = repository.findByValueContaining("alue");
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument("value" + i)));
+        IntStream.range(1, 6).forEach(i -> testDocumentRepository.save(new TestDocument()));
+        List<TestDocument> read = testDocumentRepository.findByValueContaining("alue");
         assertEquals(10, read.size(), "Returned list must contain only document with value containing \"alue\"");
         for (TestDocument d : read) {
             assertTrue(d.getValue().contains("alue"), "We requested only document with value containing \"alue\"");
@@ -427,9 +430,9 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValueNotContaining() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument("value" + i)));
-        IntStream.range(1, 6).forEach(i -> repository.save(new TestDocument("test" + i)));
-        List<TestDocument> read = repository.findByValueNotContaining("alue");
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument("value" + i)));
+        IntStream.range(1, 6).forEach(i -> testDocumentRepository.save(new TestDocument("test" + i)));
+        List<TestDocument> read = testDocumentRepository.findByValueNotContaining("alue");
         assertEquals(5, read.size(), "Returned list must contain only document with value not containing \"alue\"");
         for (TestDocument d : read) {
             assertFalse(d.getValue().contains("alue"), "We requested only document with value not containing \"alue\"");
@@ -438,8 +441,8 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValueLike() {
-        IntStream.range(1, 21).forEach(i -> repository.save(new TestDocument("value" + i)));
-        List<TestDocument> read = repository.findByValueLike("value1");
+        IntStream.range(1, 21).forEach(i -> testDocumentRepository.save(new TestDocument("value" + i)));
+        List<TestDocument> read = testDocumentRepository.findByValueLike("value1");
         assertEquals(11, read.size(), "Returned list must contain only document with value starting with value1");
         for (TestDocument d : read) {
             assertTrue(d.getValue().startsWith("value1"), "We requested only document with value starting with value1");
@@ -448,9 +451,9 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValueNotLike() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument("value" + i)));
-        IntStream.range(1, 6).forEach(i -> repository.save(new TestDocument("test" + i)));
-        List<TestDocument> read = repository.findByValueNotLike("alue");
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument("value" + i)));
+        IntStream.range(1, 6).forEach(i -> testDocumentRepository.save(new TestDocument("test" + i)));
+        List<TestDocument> read = testDocumentRepository.findByValueNotLike("alue");
         assertEquals(5, read.size(), "Returned list must contain only document with value not containing \"alue\"");
         for (TestDocument d : read) {
             assertFalse(d.getValue().contains("alue"), "We requested only document with value not containing \"alue\"");
@@ -459,9 +462,9 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValue5True() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument(true)));
-        IntStream.range(1, 6).forEach(i -> repository.save(new TestDocument(false)));
-        List<TestDocument> read = repository.findByValue5True();
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument(true)));
+        IntStream.range(1, 6).forEach(i -> testDocumentRepository.save(new TestDocument(false)));
+        List<TestDocument> read = testDocumentRepository.findByValue5True();
         assertEquals(10, read.size(), "Returned list must contain only document with value5 set to true");
         for (TestDocument d : read) {
             assertTrue(d.isValue5(), "We requested only document with value5 set to true");
@@ -470,9 +473,9 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testFindByValue5False() {
-        IntStream.range(1, 11).forEach(i -> repository.save(new TestDocument(true)));
-        IntStream.range(1, 6).forEach(i -> repository.save(new TestDocument(false)));
-        List<TestDocument> read = repository.findByValue5False();
+        IntStream.range(1, 11).forEach(i -> testDocumentRepository.save(new TestDocument(true)));
+        IntStream.range(1, 6).forEach(i -> testDocumentRepository.save(new TestDocument(false)));
+        List<TestDocument> read = testDocumentRepository.findByValue5False();
         assertEquals(5, read.size(), "Returned list must contain only document with value5 set to false");
         for (TestDocument d : read) {
             assertFalse(d.isValue5(), "We requested only document with value5 set to false");
@@ -483,8 +486,8 @@ class TestDocumentRepositoryBase {
     void testFindOverflowing() {
         List<TestDocument> toSave = new LinkedList<>();
         IntStream.range(1, 501).forEach(i -> toSave.add(new TestDocument("value" + i, "value2" + i)));
-        repository.saveAll(toSave);
-        List<TestDocument> read = repository.findByValue2NotNull();
+        testDocumentRepository.saveAll(toSave);
+        List<TestDocument> read = testDocumentRepository.findByValue2NotNull();
         assertEquals(500, read.size(), "500 documents with non null value2 are stored in db");
         Map<String, TestDocument> mapped = read.stream().collect(Collectors.toMap(TestDocument::getValue, t -> t));
         IntStream.range(1, 501).forEach(i -> assertTrue(mapped.containsKey("value" + i), "Result does not contain all documents"));
@@ -494,11 +497,11 @@ class TestDocumentRepositoryBase {
     void testPagedFindWithPagination() {
         List<TestDocument> toSave = new LinkedList<>();
         IntStream.range(1, 501).forEach(i -> toSave.add(new TestDocument("value", "value" + i)));
-        repository.saveAll(toSave);
+        testDocumentRepository.saveAll(toSave);
         List<TestDocument> merged = new LinkedList<>();
         Pageable pageable = PageRequest.of(0, 25, Sort.by(Sort.Order.asc("value2")));
         for (int i = 0; i < 20; i++) {
-            Page<TestDocument> read = repository.findByValue("value", pageable);
+            Page<TestDocument> read = testDocumentRepository.findByValue("value", pageable);
             int size = merged.size();
             read.stream().forEach(merged::add);
             assertEquals(25, merged.size() - size, "25 document in a page was requested");
@@ -511,18 +514,18 @@ class TestDocumentRepositoryBase {
     @Test
     void testPagedWithMixedOrderInPagination() {
         Pageable pageable = PageRequest.of(0, 25, Sort.by(Sort.Order.asc("value2"), Sort.Order.desc("value")));
-        assertThrows(IllegalStateException.class, () -> repository.findByValue("value", pageable));
+        assertThrows(IllegalStateException.class, () -> testDocumentRepository.findByValue("value", pageable));
     }
 
     @Test
     void testSlicedFindWithPagination() {
         List<TestDocument> toSave = new LinkedList<>();
         IntStream.range(1, 501).forEach(i -> toSave.add(new TestDocument("value" + i, "value")));
-        repository.saveAll(toSave);
+        testDocumentRepository.saveAll(toSave);
         List<TestDocument> merged = new LinkedList<>();
         Pageable pageable = PageRequest.of(0, 25, Sort.by(Sort.Order.asc("value")));
         for (int i = 0; i < 20; i++) {
-            Slice<TestDocument> read = repository.findByValue2("value", pageable);
+            Slice<TestDocument> read = testDocumentRepository.findByValue2("value", pageable);
             int size = merged.size();
             read.stream().forEach(merged::add);
             assertEquals(25, merged.size() - size, "25 document in a page was requested");
@@ -536,8 +539,8 @@ class TestDocumentRepositoryBase {
     void testTopped() {
         List<TestDocument> toSave = new LinkedList<>();
         IntStream.range(1, 100).forEach(i -> toSave.add(new TestDocument("value", "value" + 1)));
-        repository.saveAll(toSave);
-        List<TestDocument> read = repository.findTop80ByValue("value");
+        testDocumentRepository.saveAll(toSave);
+        List<TestDocument> read = testDocumentRepository.findTop80ByValue("value");
         assertEquals(80, read.size(), "There is 100 document and 80 was requested, 80 should be returned");
     }
 
@@ -545,24 +548,24 @@ class TestDocumentRepositoryBase {
     void testFindWithSubAttributes() {
         List<TestDocument> toSave = new LinkedList<>();
         IntStream.range(1, 20).forEach(i -> toSave.add(new TestDocument(new TestDocumentAddress("street" + i, "city"))));
-        repository.saveAll(toSave);
-        List<TestDocument> read = repository.findByAddressStreet("street10");
+        testDocumentRepository.saveAll(toSave);
+        List<TestDocument> read = testDocumentRepository.findByAddressStreet("street10");
         assertEquals(1, read.size(), "There is street10 in DB, we should get it here");
     }
 
     @Test
     void testNoNameParameter() {
-        assertThrows(QueryException.class, () -> repository.findByValueAndAddressStreet("", ""));
+        assertThrows(QueryException.class, () -> testDocumentRepository.findByValueAndAddressStreet("", ""));
     }
 
     @Test
     void testCustomIdGeneration() throws IOException {
-        client.save(new SpringTestDocument());
-        SpringTestDocument read = client.read("test1", SpringTestDocument.class);
+        couchDbClient.save(new SpringTestDocument());
+        SpringTestDocument read = couchDbClient.read("test1", SpringTestDocument.class);
         assertNotNull(read, "Document with id test1 should be in DB if TestIdGenerator was wired and used");
-        TestDocument saved = client.save(new TestDocument("valueCIG"));
+        TestDocument saved = couchDbClient.save(new TestDocument("valueCIG"));
         assertNotEquals("test2", saved.getId());
-        assertNotNull(client.read(saved.getId(), TestDocument.class), "Probably some confusion. Proper id generator used, but document is not stored in DB");
+        assertNotNull(couchDbClient.read(saved.getId(), TestDocument.class), "Probably some confusion. Proper id generator used, but document is not stored in DB");
 
     }
 
@@ -573,9 +576,9 @@ class TestDocumentRepositoryBase {
         for (int i = 0; i < 26; i++) {
             toSave.add(new TestDocument("value_" + c++));
         }
-        repository.saveAll(toSave);
+        testDocumentRepository.saveAll(toSave);
         List<String> sorted = toSave.stream().map(TestDocument::getValue).collect(Collectors.toList());
-        Iterable<TestDocument> read = repository.findAll(Sort.by(Sort.Order.asc("value")));
+        Iterable<TestDocument> read = testDocumentRepository.findAll(Sort.by(Sort.Order.asc("value")));
         int i = 0;
         for (TestDocument document : read) {
             assertEquals(document.getValue(), toSave.get(i++).getValue(), "Find all result is sorted wrongly");
@@ -586,11 +589,11 @@ class TestDocumentRepositoryBase {
     void testFindAllWithSortedPagination() {
         List<TestDocument> toSave = new LinkedList<>();
         IntStream.range(1, 501).forEach(i -> toSave.add(new TestDocument("value" + i, "value")));
-        repository.saveAll(toSave);
+        testDocumentRepository.saveAll(toSave);
         List<TestDocument> merged = new LinkedList<>();
         Pageable pageable = PageRequest.of(0, 25, Sort.by(Sort.Order.asc("value")));
         for (int i = 0; i < 20; i++) {
-            Page<TestDocument> read = repository.findAll(pageable);
+            Page<TestDocument> read = testDocumentRepository.findAll(pageable);
             int size = merged.size();
             read.stream().forEach(merged::add);
             assertEquals(500, read.getTotalElements(), "Total count of 500 must be returned");
@@ -605,11 +608,11 @@ class TestDocumentRepositoryBase {
     void testFindAllWithPaginationNoSort() {
         List<TestDocument> toSave = new LinkedList<>();
         IntStream.range(1, 501).forEach(i -> toSave.add(new TestDocument("value" + i, "value")));
-        repository.saveAll(toSave);
+        testDocumentRepository.saveAll(toSave);
         List<TestDocument> merged = new LinkedList<>();
         Pageable pageable = PageRequest.of(0, 25, Sort.unsorted());
         for (int i = 0; i < 20; i++) {
-            Page<TestDocument> read = repository.findAll(pageable);
+            Page<TestDocument> read = testDocumentRepository.findAll(pageable);
             int size = merged.size();
             read.stream().forEach(merged::add);
             assertEquals(500, read.getTotalElements(), "Total count of 500 must be returned");
@@ -622,35 +625,35 @@ class TestDocumentRepositoryBase {
 
     @Test
     void testViewQuery() throws IOException {
-        DesignDocument allDesign = client.readDesignSafely("view-query-test", "test").
+        DesignDocument allDesign = couchDbClient.readDesignSafely("view-query-test", "test").
                 orElseGet(() -> new DesignDocument("view-query-test", new HashSet<>()));
         View dataView = allDesign.getViews().get("sum");
         if (dataView == null) {
             dataView = new View("sum", "function(doc){emit(doc._id, 1);}", "_sum");
             allDesign.addView(dataView);
-            client.saveDesign(allDesign, "test");
+            couchDbClient.saveDesign(allDesign, "test");
         }
         List<TestDocument> toSave = new LinkedList<>();
         IntStream.range(1, 501).forEach(i -> toSave.add(new TestDocument("value" + i, "value")));
-        repository.saveAll(toSave);
-        List<TestDocument> result = repository.viewQueryBased(Pageable.unpaged());
+        testDocumentRepository.saveAll(toSave);
+        List<TestDocument> result = testDocumentRepository.viewQueryBased(Pageable.unpaged());
         assertEquals(500, result.size(), "Used view should return all existing (500 created) documents");
     }
 
     @Test
     void testReducingViewQuery() throws IOException {
-        DesignDocument allDesign = client.readDesignSafely("view-query-test", "test").
+        DesignDocument allDesign = couchDbClient.readDesignSafely("view-query-test", "test").
                 orElseGet(() -> new DesignDocument("view-query-test", new HashSet<>()));
         View dataView = allDesign.getViews().get("sum");
         if (dataView == null) {
             dataView = new View("sum", "function(doc){emit(doc._id, 1);}", "_sum");
             allDesign.addView(dataView);
-            client.saveDesign(allDesign, "test");
+            couchDbClient.saveDesign(allDesign, "test");
         }
         List<TestDocument> toSave = new LinkedList<>();
         IntStream.range(1, 501).forEach(i -> toSave.add(new TestDocument("value" + i, "value")));
-        repository.saveAll(toSave);
-        int result = repository.viewQueryBasedWithReducing();
+        testDocumentRepository.saveAll(toSave);
+        int result = testDocumentRepository.viewQueryBasedWithReducing();
         assertEquals(500, result, "Used view should return sum of all existing (500 created) documents");
     }
 
