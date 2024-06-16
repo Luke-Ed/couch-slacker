@@ -8,24 +8,24 @@ com-fasterxml-jackson-core-jackson-core = "2.17.1"
 com-fasterxml-jackson-core-jackson-databind = "2.17.1"
 com-github-spotbugs-spotbugs-annotations = "4.8.3"
 commons-codec-commons-codec = "1.16.1"
-commons-io-commons-io = "2.11.0"
+commons-io-commons-io = "2.16.1"
 org-apache-httpcomponents-httpclient = "4.5.13"
-org-hibernate-validator-hibernate-validator = "7.0.4.Final"
-org-jetbrains-annotations = "23.0.0"
+org-hibernate-validator-hibernate-validator = "8.0.1.Final"
+org-jetbrains-annotations = "24.1.0"
 org-junit-jupiter-junit-jupiter = "5.10.2"
 org-mockito-mockito-junit-jupiter = "5.11.0"
-org-openjdk-jmh-jmh-core = "1.35"
-org-openjdk-jmh-jmh-generator-annprocess = "1.35"
-org-projectlombok-lombok = "1.18.24"
+org-openjdk-jmh-jmh-core = "1.37"
+org-openjdk-jmh-jmh-generator-annprocess = "1.37"
+org-projectlombok-lombok = "1.18.32"
 org-springframework-boot-spring-boot = "3.3.0"
 org-springframework-boot-spring-boot-autoconfigure = "3.3.0"
 org-springframework-boot-spring-boot-configuration-processor = "3.3.0"
 org-springframework-boot-spring-boot-test = "3.3.0"
 org-springframework-data-spring-data-commons = "3.3.0"
-org-springframework-spring-beans = "5.3.24"
-org-springframework-spring-context = "5.3.24"
-org-springframework-spring-test = "5.3.24"
-org-springframework-spring-tx = "5.3.24"
+org-springframework-spring-beans = "6.1.8"
+org-springframework-spring-context = "6.1.8"
+org-springframework-spring-test = "6.1.8"
+org-springframework-spring-tx = "6.1.8"
 org-yaml-snakeyaml = "2.2"
 
 [libraries]
@@ -33,7 +33,6 @@ ch-qos-logback-logback-classic = { module = "ch.qos.logback:logback-classic", ve
 com-fasterxml-jackson-core-jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "com-fasterxml-jackson-core-jackson-annotations" }
 com-fasterxml-jackson-core-jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "com-fasterxml-jackson-core-jackson-core" }
 com-fasterxml-jackson-core-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "com-fasterxml-jackson-core-jackson-databind" }
-com-google-code-findbugs-annotations = { module = "com.google.code.findbugs:annotations", version.ref = "com-google-code-findbugs-annotations" }
 com-github-spotbugs-spotbugs-annotations =  {module = "com.github.spotbugs:spotbugs-annotations", version.ref = "com-github-spotbugs-spotbugs-annotations"}
 commons-codec-commons-codec = { module = "commons-codec:commons-codec", version.ref = "commons-codec-commons-codec" }
 commons-io-commons-io = { module = "commons-io:commons-io", version.ref = "commons-io-commons-io" }
