@@ -11,13 +11,12 @@ plugins {
     id("project-report")
     id("com.diffplug.spotless")
     id("com.github.ben-manes.versions")
+    kotlin("jvm")
 }
 
 repositories {
     mavenLocal()
-    maven {
-        url = uri("https://repo.maven.apache.org/maven2/")
-    }
+    mavenCentral()
 }
 
 dependencies {
@@ -28,14 +27,17 @@ dependencies {
     api(libs.org.springframework.spring.context)
     api(libs.org.springframework.data.spring.data.commons)
     api(libs.org.apache.httpcomponents.httpclient)
+    api(libs.com.squareup.okhttp3.okhttp)
     api(libs.commons.codec.commons.codec)
     api(libs.com.fasterxml.jackson.core.jackson.core)
     api(libs.com.fasterxml.jackson.core.jackson.annotations)
     api(libs.com.fasterxml.jackson.core.jackson.databind)
+    api(libs.com.fasterxml.jackson.module.jackson.module.kotlin)
     api(libs.org.hibernate.validator.hibernate.validator)
     api(libs.com.github.spotbugs.spotbugs.annotations)
     api(libs.org.springframework.boot.spring.boot.configuration.processor)
     api(libs.org.jetbrains.annotations)
+    implementation(libs.io.github.oshai.kotlin.logging)
     testImplementation(libs.org.junit.jupiter.junit.jupiter)
     testImplementation(libs.org.mockito.mockito.junit.jupiter)
     testImplementation(libs.commons.io.commons.io)
