@@ -11,7 +11,7 @@ class IdGeneratorUUIDKt: IdGeneratorKt<Any> {
         return UUID.randomUUID().toString()
     }
 
-    inline fun <reified EntityT> generateId(entityT: EntityT): String {
-        return UUID.randomUUID().toString()
-    }
+//    inline fun <reified EntityT> generateId(entityT: EntityT): String {
+//        return UUID.randomUUID().toString()
+//    }
 }
