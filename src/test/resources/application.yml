@@ -6,7 +6,6 @@ spring:
       on-profile: test-view-strategy
 couchdb:
   client:
-    url: http://localhost:10000/
     username: admin
     password: password
     bulk-max-size: 50
@@ -23,7 +22,6 @@ spring:
       on-profile: test-mango-strategy
 couchdb:
   client:
-    url: http://localhost:10000/
     username: admin
     password: password
     bulk-max-size: 50

@@ -25,15 +25,18 @@ import com.github.luke_ed.couchdb.slacker.structure.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -56,10 +59,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("SpringJavaAutowiredMembersInspection")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Disabled
+@Testcontainers
+@SpringBootTest
 class TestDocumentRepositoryBase {
+
+    static GenericContainer<?> singleCouchDbContainer;
+
+    @AfterAll
+    static void tearDown() {
+        if (singleCouchDbContainer != null && singleCouchDbContainer.isRunning()) {
+            singleCouchDbContainer.stop();
+        }
+    }
 
     @Autowired
     public TestDocumentRepositoryBase(CouchDbClient couchDbClient, TestDocumentRepository testDocumentRepository) {
