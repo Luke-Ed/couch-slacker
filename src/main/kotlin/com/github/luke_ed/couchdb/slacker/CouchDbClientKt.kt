@@ -3,6 +3,8 @@ package com.github.luke_ed.couchdb.slacker
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.luke_ed.couchdb.slacker.structure.DocumentPutResponse
 import com.github.luke_ed.couchdb.slacker.utils.ThrowingFunction
 import com.github.luke_ed.couchdb.slacker.utils.ViewedDocumentSerializer
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -141,6 +143,14 @@ class CouchDbClientKt internal constructor(
         }
         val localMapper = resolveMapper(entityMetadata, entity::class.java)
 
-        val response = put(getHttpUrl(baseHttpUrl, entityMetadata.databaseName, id), localMapper.writeValueAsString(entity))
+        val response: DocumentPutResponse = put(
+            getHttpUrl(baseHttpUrl, entityMetadata.databaseName, id),
+            localMapper.writeValueAsString(entity),
+        ) { response -> objectMapper.readValue<DocumentPutResponse>(response.body.toString()) }
+
+        entityMetadata.revisionWriter.write(entity, response.rev)
+        entityMetadata.idWriter.write(id, response.id)
+        logger.debug { "Saved document $entity with id ${response.id} and revision ${response.rev}" }
+        return entity
     }
 }
