@@ -342,11 +342,11 @@ class CouchDbClientTest {
 
     @Test
     void testClose() throws IOException {
-        CloseableHttpClient httpClient = mock(CloseableHttpClient.class);
-        client = new CouchDbClient(httpClient, httpHost, httpContext, baseURI, Collections.emptyList(),
+        CloseableHttpClient localHttpClient = mock(CloseableHttpClient.class);
+        client = new CouchDbClient(localHttpClient, httpHost, httpContext, baseURI, Collections.emptyList(),
                 8, 3, false, 10000, QueryStrategy.MANGO, new ObjectMapper(), dbContext);
         client.close();
-        verify(httpClient, only().description("Http client must be closed")).close();
+        verify(localHttpClient, only().description("Http client must be closed")).close();
     }
 
     @Test
@@ -655,7 +655,7 @@ class CouchDbClientTest {
 
     @Test
     void testRequestFind() throws IOException {
-        CouchDbClient client = new CouchDbClient(httpClient, httpHost, httpContext, baseURI, Collections.emptyList(),
+        CouchDbClient localClient = new CouchDbClient(httpClient, httpHost, httpContext, baseURI, Collections.emptyList(),
                 8, 3, false, 3, QueryStrategy.MANGO, new ObjectMapper(), dbContext);
         IOException thrown = new IOException("error");
         InputStream content = new ByteArrayInputStream(("{\"docs\":[{\"_id\":\"unique1\",\"_rev\":\"1231\",\"value\":\"value1\"},{\"_id\":\"unique2\"," +
@@ -687,7 +687,7 @@ class CouchDbClientTest {
         FindContext context = new FindContext(partTree, Collections.singletonMap("value", "test"),
                 new EntityMetadata(DocumentDescriptor.of(TestDocument.class)));
         DocumentFindRequest findRequest = new DocumentFindRequest(context, null, null, null, Sort.unsorted(), false);
-        FindResult<TestDocument> result = client.find(findRequest, TestDocument.class);
+        FindResult<TestDocument> result = localClient.find(findRequest, TestDocument.class);
         assertEquals(3, result.getBookmarks().size(), "For 8 documents read in 3 request (because max bulk size), there should be 3 bookmarks");
         assertTrue(result.getBookmarks().values().stream().allMatch("1234"::equals));
         assertEquals(8, result.getEntities().size(), "Three content responses contains 8 documents");
@@ -704,7 +704,7 @@ class CouchDbClientTest {
             assertContent(bodies.get(i), post.getEntity().getContent(), "Body of find request is not properly created");
         }
 
-        assertEquals(thrown, assertThrows(IOException.class, () -> client.find(findRequest, TestDocument.class)),
+        assertEquals(thrown, assertThrows(IOException.class, () -> localClient.find(findRequest, TestDocument.class)),
                 "CouchDb client should not alternate original exception");
         HttpRequest request = requestCaptor.getValue();
         HttpPost post = (HttpPost) request;
@@ -714,7 +714,7 @@ class CouchDbClientTest {
 
     @Test
     void testRequestFindWithLimitAndBookmarkBy() throws IOException {
-        CouchDbClient client = new CouchDbClient(httpClient, httpHost, httpContext, baseURI, Collections.emptyList(),
+        CouchDbClient localClient = new CouchDbClient(httpClient, httpHost, httpContext, baseURI, Collections.emptyList(),
                 8, 3, false, 3, QueryStrategy.MANGO, new ObjectMapper(), dbContext);
         IOException thrown = new IOException("error");
         InputStream content = new ByteArrayInputStream(("{\"docs\":[{\"_id\":\"unique1\",\"_rev\":\"1231\",\"value\":\"value1\"},{\"_id\":\"unique2\"," +
@@ -746,7 +746,7 @@ class CouchDbClientTest {
         FindContext context = new FindContext(partTree, Collections.singletonMap("value", "test"),
                 new EntityMetadata(DocumentDescriptor.of(TestDocument.class)));
         DocumentFindRequest findRequest = new DocumentFindRequest(context, null, 8, null, Sort.unsorted(), false);
-        List<TestDocument> result = client.find(findRequest, TestDocument.class, 3).getEntities();
+        List<TestDocument> result = localClient.find(findRequest, TestDocument.class, 3).getEntities();
         assertEquals(8, result.size(), "Three content responses contains 8 documents");
         List<HttpRequest> requests = requestCaptor.getAllValues();
         List<String> bodies = Arrays.asList("{\"limit\":3,\"selector\":{\"$or\":[{\"value\":{\"$eq\":\"test\"}}]}}",
@@ -761,7 +761,7 @@ class CouchDbClientTest {
             assertContent(bodies.get(i), post.getEntity().getContent(), "Body of find request is not properly created");
         }
 
-        assertEquals(thrown, assertThrows(IOException.class, () -> client.find(findRequest, TestDocument.class)),
+        assertEquals(thrown, assertThrows(IOException.class, () -> localClient.find(findRequest, TestDocument.class)),
                 "CouchDb client should not alternate original exception");
         HttpRequest request = requestCaptor.getValue();
         HttpPost post = (HttpPost) request;
@@ -774,8 +774,8 @@ class CouchDbClientTest {
         if (!IOUtils.contentEquals(actual, expected)) {
             actual.reset();
             expected.reset();
-            throw new AssertionFailedError(message, IOUtils.toString(expected, StandardCharsets.UTF_8.name()), IOUtils.toString(actual,
-                    StandardCharsets.UTF_8.name()));
+            throw new AssertionFailedError(message, IOUtils.toString(expected, StandardCharsets.UTF_8), IOUtils.toString(actual,
+                    StandardCharsets.UTF_8));
         }
     }
 
