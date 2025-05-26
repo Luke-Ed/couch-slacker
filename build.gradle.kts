@@ -98,3 +98,22 @@ tasks.withType<DependencyUpdatesTask> {
         }
     }
 }
+
+spotless {
+    // This should be origin/main, but I wanted to leave it stable or mostly stable till I moved more to kotlin
+    ratchetFrom = "origin/move_to_okhttp_kotlin"
+
+    java {
+        googleJavaFormat()
+        indentWithSpaces(2)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    kotlin {
+        ktfmt().googleStyle()
+        indentWithSpaces(2)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
