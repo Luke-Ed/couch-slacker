@@ -13,7 +13,8 @@ org-apache-httpcomponents-httpclient = "4.5.13"
 org-hibernate-validator-hibernate-validator = "8.0.1.Final"
 org-jetbrains-annotations = "24.1.0"
 org-junit-jupiter-junit-jupiter = "5.10.2"
-org-mockito-mockito-junit-jupiter = "5.11.0"
+mockito = "5.11.0"
+mockito-kotlin = "5.3.1"
 org-openjdk-jmh-jmh-core = "1.37"
 org-openjdk-jmh-jmh-generator-annprocess = "1.37"
 org-projectlombok-lombok = "1.18.32"
@@ -37,7 +38,8 @@ org-apache-httpcomponents-httpclient = { module = "org.apache.httpcomponents:htt
 org-hibernate-validator-hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "org-hibernate-validator-hibernate-validator" }
 org-jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "org-jetbrains-annotations" }
 org-junit-jupiter-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "org-junit-jupiter-junit-jupiter" }
-org-mockito-mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "org-mockito-mockito-junit-jupiter" }
+mockito = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
 org-openjdk-jmh-jmh-core = { module = "org.openjdk.jmh:jmh-core", version.ref = "org-openjdk-jmh-jmh-core" }
 org-openjdk-jmh-jmh-generator-annprocess = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "org-openjdk-jmh-jmh-generator-annprocess" }
 org-projectlombok-lombok = { module = "org.projectlombok:lombok", version.ref = "org-projectlombok-lombok" }
