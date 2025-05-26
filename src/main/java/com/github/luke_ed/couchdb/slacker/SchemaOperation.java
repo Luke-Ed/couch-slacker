@@ -21,6 +21,7 @@ import com.github.luke_ed.couchdb.slacker.exception.SchemaProcessingException;
 import com.github.luke_ed.couchdb.slacker.structure.DesignDocument;
 import com.github.luke_ed.couchdb.slacker.structure.View;
 import com.github.luke_ed.couchdb.slacker.utils.ThrowingBiConsumer;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -50,6 +51,7 @@ public enum SchemaOperation {
      */
     DROP(CREATE, SchemaOperation::drop);
 
+    @Getter
     private final SchemaOperation following;
     private final ThrowingBiConsumer<EntityMetadata, CouchDbClient, Exception> action;
 
@@ -60,10 +62,6 @@ public enum SchemaOperation {
 
     public boolean hasFollowing() {
         return following != null;
-    }
-
-    public SchemaOperation getFollowing() {
-        return following;
     }
 
     public void accept(EntityMetadata metadata, CouchDbClient client) throws Exception {
@@ -138,7 +136,7 @@ public enum SchemaOperation {
         }
         log.info("Validating that all expected basic design document and views exists");
         Optional<DesignDocument> designAll = client.readDesignSafely(CouchDbClient.ALL_DESIGN, metadata.getDatabaseName());
-        if (!designAll.isPresent()) {
+        if (designAll.isEmpty()) {
             throw new SchemaProcessingException(String.format("Design '%s' does not exist in %s database", CouchDbClient.ALL_DESIGN, metadata.getDatabaseName()));
         }
         View dataView = designAll.get().getViews().get(CouchDbClient.ALL_DATA_VIEW);
@@ -153,7 +151,7 @@ public enum SchemaOperation {
         if (metadata.isViewed()) {
             log.info("Entities in database {} should be accessed by views and types, validating design and views", metadata.getDatabaseName());
             Optional<DesignDocument> design = client.readDesignSafely(metadata.getDesign(), metadata.getDatabaseName());
-            if (!design.isPresent()) {
+            if (design.isEmpty()) {
                 throw new SchemaProcessingException(String.format("Design '%s' does not exist in %s database", metadata.getDesign(), metadata.getDatabaseName()));
             }
             View view = design.get().getViews().get(metadata.getView());
