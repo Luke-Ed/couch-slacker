@@ -30,7 +30,7 @@ import java.util.Map;
 
 /**
  * {@link HttpResponseInterceptor} which throws {@link CouchDbException} in case that response code is not OK, CREATED, ACCEPTED or NOT_MODIFIED. If there is
- * a body in request, it is checked for error and reason and it is returned as reason part of the exception. If body is not present, common reason phrase is
+ * a body in request, it is checked for error and reason, and it is returned as reason part of the exception. If body is not present, common reason phrase is
  * returned instead.
  *
  * @author Majlanky
@@ -45,10 +45,10 @@ public class ThrowingInterceptor implements HttpResponseInterceptor {
     @Override
     public void process(HttpResponse response, HttpContext context) throws IOException {
         switch (response.getStatusLine().getStatusCode()) {
-            case HttpStatus.SC_OK:
-            case HttpStatus.SC_CREATED:
-            case HttpStatus.SC_ACCEPTED:
-            case HttpStatus.SC_NOT_MODIFIED:
+            case HttpStatus.SC_OK,
+                 HttpStatus.SC_CREATED,
+                 HttpStatus.SC_ACCEPTED,
+                 HttpStatus.SC_NOT_MODIFIED:
                 break;
             //Report all unknown states
             default:
