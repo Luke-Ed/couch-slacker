@@ -33,7 +33,17 @@ public class CouchDbRepositoryConfigurationExtension extends RepositoryConfigura
      * {@inheritDoc}
      */
     @Override
-    protected @NotNull String getModulePrefix() {
+    public @NotNull String getModuleName() {
+        return "couchDb";
+    }
+
+    /**
+     * @deprecated
+     * {@inheritDoc}
+     */
+    @Override
+    @Deprecated(since = "0.0.1")
+    public @NotNull String getModulePrefix() {
         return "couchDb";
     }
 
