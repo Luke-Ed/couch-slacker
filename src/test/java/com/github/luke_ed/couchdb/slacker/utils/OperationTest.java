@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class OperationTest {
 
-    final static String VIEW_MAP = "function(doc){if%1$s{emit(null);}}";
+    static final String VIEW_MAP = "function(doc){if%1$s{emit(null);}}";
 
     @Test
     @SuppressWarnings("squid:S5961")

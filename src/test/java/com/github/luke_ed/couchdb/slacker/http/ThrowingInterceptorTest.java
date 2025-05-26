@@ -59,7 +59,7 @@ class ThrowingInterceptorTest {
     ThrowingInterceptor interceptor;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         interceptor = new ThrowingInterceptor();
     }
 
