@@ -66,7 +66,7 @@ public class SpringCouchDbContext extends CouchDbContext {
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
         provider.addIncludeFilter(new AnnotationTypeFilter(Document.class));
         List<String> configurationPackages =
-                context.getBeansWithAnnotation(Configuration.class).values().stream().map(o -> o.getClass().getPackage().getName()).collect(Collectors.toList());
+                context.getBeansWithAnnotation(Configuration.class).values().stream().map(o -> o.getClass().getPackage().getName()).toList();
         List<Class<?>> entityClasses = new LinkedList<>();
         for (String pack : entityScanPackages == null ? configurationPackages : entityScanPackages.getPackageNames()) {
             for (BeanDefinition definition : provider.findCandidateComponents(pack)) {

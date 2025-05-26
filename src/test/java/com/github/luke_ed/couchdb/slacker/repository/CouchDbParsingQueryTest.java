@@ -44,7 +44,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -369,7 +368,7 @@ class CouchDbParsingQueryTest {
                 "Request it wrongly initialized");
         assertDoesNotThrow(() -> (Page<TestDocument>) o, "Result must be list of documents");
         assertNotNull(o, "Returned list must not be null");
-        List<TestDocument> documents = ((Page<TestDocument>) o).stream().collect(Collectors.toList());
+        List<TestDocument> documents = ((Page<TestDocument>) o).stream().toList();
         assertEquals(1, documents.size(), "Query should not alternate result in this case");
         assertEquals(result, documents.get(0), "Query should not alternate result in this case");
     }
@@ -418,7 +417,7 @@ class CouchDbParsingQueryTest {
                 "Request it wrongly initialized");
         assertDoesNotThrow(() -> (Slice<TestDocument>) o, "Result must be list of documents");
         assertNotNull(o, "Returned list must not be null");
-        List<TestDocument> documents = ((Slice<TestDocument>) o).stream().collect(Collectors.toList());
+        List<TestDocument> documents = ((Slice<TestDocument>) o).stream().toList();
         assertEquals(1, documents.size(), "Query should not alternate result in this case");
         assertEquals(result, documents.get(0), "Query should not alternate result in this case");
         assertTrue(((Slice<TestDocument>) o).hasNext(), "Slice must report that there is anything else to return");

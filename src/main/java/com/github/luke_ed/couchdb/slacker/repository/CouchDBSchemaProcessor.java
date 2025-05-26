@@ -79,7 +79,7 @@ public class CouchDBSchemaProcessor {
      */
     public void process(@NotNull CouchDbContext context,
                         @NotNull SchemaOperation schemaOperation) throws Exception {
-        List<EntityMetadata> allMetadata = context.getAll().values().stream().flatMap(m -> m.values().stream()).collect(Collectors.toList());
+        List<EntityMetadata> allMetadata = context.getAll().values().stream().flatMap(m -> m.values().stream()).toList();
         log.debug("Starting schema processing with operation set to {}", schemaOperation.toString().toLowerCase());
         processSchema(allMetadata, schemaOperation);
         log.debug("Schema processing done");

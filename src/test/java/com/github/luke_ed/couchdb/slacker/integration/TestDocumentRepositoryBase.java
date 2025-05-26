@@ -153,7 +153,7 @@ class TestDocumentRepositoryBase {
             assertEquals("value2" + i.getAndIncrement(), s.getValue2(), "Value of entity is not matching. Order or data of entities is messed up");
         });
         assertEquals(amount,
-                StreamSupport.stream(testDocumentRepository.findAllById(StreamSupport.stream(saved.spliterator(), false).map(TestDocument::getId).collect(Collectors.toList())).spliterator(), false).count(),
+                StreamSupport.stream(testDocumentRepository.findAllById(StreamSupport.stream(saved.spliterator(), false).map(TestDocument::getId).toList()).spliterator(), false).count(),
                 "One or more of passed entities was not truly saved");
     }
 
@@ -169,7 +169,7 @@ class TestDocumentRepositoryBase {
         IntStream.range(1, amount + 1).forEach(i -> all.add(new TestDocument("value" + i, "value2" + i)));
         Iterable<TestDocument> saved = testDocumentRepository.saveAll(all);
         List<TestDocument> found = new LinkedList<>();
-        testDocumentRepository.findAllById(StreamSupport.stream(saved.spliterator(), false).map(TestDocument::getId).collect(Collectors.toList())).forEach(found::add);
+        testDocumentRepository.findAllById(StreamSupport.stream(saved.spliterator(), false).map(TestDocument::getId).toList()).forEach(found::add);
 
         saved.forEach(s -> assertTrue(found.stream().anyMatch(s::equals), "One of saved not found"));
     }
@@ -591,7 +591,7 @@ class TestDocumentRepositoryBase {
             toSave.add(new TestDocument("value_" + c++));
         }
         testDocumentRepository.saveAll(toSave);
-        List<String> sorted = toSave.stream().map(TestDocument::getValue).collect(Collectors.toList());
+        List<String> sorted = toSave.stream().map(TestDocument::getValue).toList();
         Iterable<TestDocument> read = testDocumentRepository.findAll(Sort.by(Sort.Order.asc("value")));
         int i = 0;
         for (TestDocument document : read) {
