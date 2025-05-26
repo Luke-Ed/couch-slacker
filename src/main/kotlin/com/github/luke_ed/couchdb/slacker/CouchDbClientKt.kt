@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.luke_ed.couchdb.slacker.structure.BulkRequest
 import com.github.luke_ed.couchdb.slacker.structure.DocumentPutResponse
 import com.github.luke_ed.couchdb.slacker.utils.ThrowingFunction
 import com.github.luke_ed.couchdb.slacker.utils.ViewedDocumentSerializer
@@ -14,8 +15,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.net.URI
-import java.net.http.HttpResponse
 import java.util.function.Consumer
+import java.util.stream.Collectors
 
 class CouchDbClientKt internal constructor(
     okHttpClient: OkHttpClient,
@@ -125,12 +126,18 @@ class CouchDbClientKt internal constructor(
     }
 
     private fun <DataT> put(httpUrl: HttpUrl, json: String, responseProcessor: ThrowingFunction<Response, DataT, IOException>): DataT {
+        val request = Request.Builder().url(httpUrl).put(json.toRequestBody(jsonMediaType)).build()
+        val response = okHttpClient.newCall(request).execute()
+        return responseProcessor.apply(response)
+    }
+
+    private fun <DataT> post(httpUrl: HttpUrl, json: String, responseProcessor: ThrowingFunction<Response, DataT, IOException>): DataT {
         val request = Request.Builder().url(httpUrl).post(json.toRequestBody(jsonMediaType)).build()
         val response = okHttpClient.newCall(request).execute()
         return responseProcessor.apply(response)
     }
 
-    private fun <EntityT : Any> save(entity: EntityT): EntityT {
+    fun <EntityT : Any> save(entity: EntityT): EntityT {
         val entityMetadata = getEntityMetadata(entity::class.java)
         var id = entityMetadata.idReader.read(entity)
         logger.debug {
@@ -152,5 +159,51 @@ class CouchDbClientKt internal constructor(
         entityMetadata.idWriter.write(id, response.id)
         logger.debug { "Saved document $entity with id ${response.id} and revision ${response.rev}" }
         return entity
+    }
+
+    fun <EntityT : Any> saveAll(entities: Iterable<EntityT>, clazz: Class<*>): Iterable<EntityT> {
+        val entityMetadata = getEntityMetadata(clazz)
+
+        logger.debug {
+            "Bulk save of ${entities.count()} documents to database ${entityMetadata.databaseName}"
+        }
+
+        for (entity in entities) {
+            var id = entityMetadata.idReader.read(entity)
+
+            if (id.isNullOrBlank()) {
+                id = generateId(entity, entity.javaClass)
+                entityMetadata.idWriter.write(entity, id)
+                logger.debug { "New Id: $id generated for saved document" }
+            }
+        }
+
+        val localMapper = resolveMapper(entityMetadata, clazz)
+
+        val responses = post(
+            getHttpUrl(baseHttpUrl, entityMetadata.databaseName, "_bulk_docs"),
+            localMapper.writeValueAsString(BulkRequest(entities))
+        ) { response -> objectMapper.readValue<List<DocumentPutResponse>>(
+            response.body.toString(),
+            objectMapper.typeFactory.constructCollectionType(
+                List::class.java,
+                DocumentPutResponse::class.java)) }
+        val indexedResponses: Map<String, DocumentPutResponse> = responses
+            .stream()
+            .collect(Collectors.toMap(DocumentPutResponse::getId) { it })
+
+        for (entity in entities) {
+            val response = indexedResponses[entityMetadata.idReader.read(entity)]
+
+            if (response?.ok == "true") {
+                entityMetadata.revisionWriter.write(entity, response.rev)
+                entityMetadata.idWriter.write(entity, response.id)
+            }
+            else {
+                logger.warn { "Document $entity with id: ${response?.id} and rev: ${response?.rev} failed to save with error ${response?.error} and reason ${response?.reason}" }
+            }
+        }
+
+        return entities;
     }
 }
