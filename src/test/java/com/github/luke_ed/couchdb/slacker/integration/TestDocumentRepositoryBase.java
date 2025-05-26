@@ -259,7 +259,7 @@ class TestDocumentRepositoryBase {
         String randomValue = UUID.randomUUID().toString();
         String randomValue2 = UUID.randomUUID().toString();
         testDocumentRepository.save(new TestDocument(null, null, randomValue2, "theSame"));
-        TestDocument saved = testDocumentRepository.save(new TestDocument(null, null, randomValue, "theSame"));
+        testDocumentRepository.save(new TestDocument(null, null, randomValue, "theSame"));
         boolean exists = testDocumentRepository.existsByValueAndValue2(randomValue, "theSame");
         assertTrue(exists, "Document must exist because we have created it");
     }
@@ -269,7 +269,7 @@ class TestDocumentRepositoryBase {
         String randomValue = UUID.randomUUID().toString();
         String randomValue2 = UUID.randomUUID().toString();
         testDocumentRepository.save(new TestDocument(null, null, randomValue2, "theSame"));
-        TestDocument saved = testDocumentRepository.save(new TestDocument(null, null, randomValue, "theSame"));
+        testDocumentRepository.save(new TestDocument(null, null, randomValue, "theSame"));
         int count = testDocumentRepository.countByValueAndValue2(randomValue, "theSame");
         assertEquals(1, count, "Exactly one document exists with the wanted value");
     }

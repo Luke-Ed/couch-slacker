@@ -45,8 +45,6 @@ class SimpleCouchDbContextTest {
     @Mock
     CouchDbClient client;
 
-    CouchDbContext context;
-
     @Test
     void testDefault() {
         CouchDbContext context = new SimpleCouchDbContext(properties);
@@ -75,7 +73,6 @@ class SimpleCouchDbContextTest {
         Map<String, List<CouchDbProperties.Document>> mapping = new HashMap<>();
         mapping.put("default", Collections.singletonList(new CouchDbProperties.Document(TestDocument.class.getName(), "anotherTest")));
         when(properties.getMapping()).thenReturn(mapping);
-        Map<String, Object> beans = new HashMap<>();
 
         CouchDbContext context = new SimpleCouchDbContext(properties);
         assertEquals("anotherTest", context.get(TestDocument.class).getDatabaseName(),
