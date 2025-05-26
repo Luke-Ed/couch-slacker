@@ -59,7 +59,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled
+@Disabled(
+"This is a super class who's tests should not (directly) execute, which is why it's disabled, they're executed by the inheritors"
+)
 @Testcontainers
 @SpringBootTest
 class TestDocumentRepositoryBase {
