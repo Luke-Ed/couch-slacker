@@ -38,7 +38,6 @@ spring:
       on-profile: schema-test
 couchdb:
   client:
-    url: http://localhost:10000/
     username: admin
     password: password
     bulk-max-size: 50

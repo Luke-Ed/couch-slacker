@@ -24,18 +24,25 @@ import com.github.luke_ed.couchdb.slacker.SchemaOperation;
 import com.github.luke_ed.couchdb.slacker.annotation.EnableCouchDbRepositories;
 import com.github.luke_ed.couchdb.slacker.repository.CouchDBSchemaProcessor;
 import com.github.luke_ed.couchdb.slacker.structure.DesignDocument;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,16 +52,47 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration(classes = {SchemaOperationTestConfiguration.class, CouchDbInitializer.class},
         initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("schema-test")
-@EntityScan({"com.github.luke_ed.couchdb.slacker.test.integration.schema"})
+@EntityScan({"com.github.luke_ed.couchdb.slacker.integration.schema"})
 @EnableCouchDbRepositories
+@SpringBootTest
 class SchemaOperationIntegrationTest {
 
     @Autowired
     CouchDbClient client;
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     CouchDBSchemaProcessor processor;
+
+    @Container
+    private static final GenericContainer<?> singleCouchDbContainer;
+
+    static {
+        singleCouchDbContainer = new GenericContainer<>(DockerImageName.parse("couchdb:latest"))
+                .withEnv(Map.of(
+                        "COUCHDB_USER", "admin",
+                        "COUCHDB_PASSWORD", "-pbkdf2-2a4bb055c2a66b28158523b86afcd7f63bc67ef1,WnMIf5ph/d+jVJDA4WjXdw==,10",
+                        "COUCHDB_SECRET", "0123456789abcdef0123456789abcdef"
+                ))
+                .withExposedPorts(5984)
+                .waitingFor(Wait.forListeningPort())
+                .waitingFor(Wait.forHttp("/_up").forStatusCode(200));
+
+        singleCouchDbContainer.start();
+    }
+
+    @DynamicPropertySource
+    static void viewStrategyProperties(DynamicPropertyRegistry registry) {
+        registry.add("couchdb.client.url", () -> "http://%s:%d"
+                .formatted(singleCouchDbContainer.getHost(), singleCouchDbContainer.getFirstMappedPort())
+        );
+    }
+
+    @AfterAll
+    void afterAll() {
+        if (singleCouchDbContainer.isRunning()) {
+            singleCouchDbContainer.stop();
+        }
+    }
 
     @Test
     void testDatabaseExists() throws IOException {
