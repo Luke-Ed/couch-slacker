@@ -17,7 +17,6 @@
 package com.github.luke_ed.couchdb.slacker.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.luke_ed.couchdb.slacker.repository.CouchDbParsingQuery;
 import com.github.luke_ed.couchdb.slacker.CouchDbClient;
 import com.github.luke_ed.couchdb.slacker.DocumentDescriptor;
 import com.github.luke_ed.couchdb.slacker.EntityMetadata;

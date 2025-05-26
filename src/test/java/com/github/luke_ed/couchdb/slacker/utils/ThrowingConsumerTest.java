@@ -16,7 +16,6 @@
 
 package com.github.luke_ed.couchdb.slacker.utils;
 
-import com.github.luke_ed.couchdb.slacker.utils.ThrowingConsumer;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

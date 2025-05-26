@@ -16,9 +16,6 @@
 
 package com.github.luke_ed.couchdb.slacker.repository;
 
-import com.github.luke_ed.couchdb.slacker.repository.CouchDbDirectQuery;
-import com.github.luke_ed.couchdb.slacker.repository.CouchDbParsingQuery;
-import com.github.luke_ed.couchdb.slacker.repository.CouchDbQueryLookupStrategy;
 import com.github.luke_ed.couchdb.slacker.CouchDbClient;
 import com.github.luke_ed.couchdb.slacker.annotation.Query;
 import com.github.luke_ed.couchdb.slacker.configuration.CouchDbProperties;
@@ -95,6 +92,7 @@ class CouchDbQueryLookupStrategyTest {
         verify(namedQueries, atLeastOnce().description("Strategy must check named queries")).hasQuery("TestDocument.queryAnnotated");
     }
 
+    @SuppressWarnings("S1172") // Method is used, but not via a direct call
     private List<TestDocument> findByValue(@Param("value") String value) {
         return Collections.emptyList();
     }

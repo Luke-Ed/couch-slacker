@@ -16,7 +16,6 @@
 
 package com.github.luke_ed.couchdb.slacker;
 
-import com.github.luke_ed.couchdb.slacker.DocumentBase;
 import com.github.luke_ed.couchdb.slacker.annotation.Document;
 
 @Document(accessByView = true)

@@ -18,7 +18,6 @@ package com.github.luke_ed.couchdb.slacker.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.luke_ed.couchdb.slacker.utils.Operation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.data.repository.query.parser.Part;

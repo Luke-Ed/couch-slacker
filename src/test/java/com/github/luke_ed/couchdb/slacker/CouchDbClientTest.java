@@ -17,7 +17,6 @@
 package com.github.luke_ed.couchdb.slacker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.luke_ed.couchdb.slacker.*;
 import com.github.luke_ed.couchdb.slacker.repository.CouchDbEntityInformation;
 import com.github.luke_ed.couchdb.slacker.structure.DocumentFindRequest;
 import com.github.luke_ed.couchdb.slacker.structure.FindResult;

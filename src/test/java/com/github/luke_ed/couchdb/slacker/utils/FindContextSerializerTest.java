@@ -18,7 +18,6 @@ package com.github.luke_ed.couchdb.slacker.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.luke_ed.couchdb.slacker.utils.FindContext;
 import com.github.luke_ed.couchdb.slacker.DocumentDescriptor;
 import com.github.luke_ed.couchdb.slacker.EntityMetadata;
 import com.github.luke_ed.couchdb.slacker.ViewedDocument;

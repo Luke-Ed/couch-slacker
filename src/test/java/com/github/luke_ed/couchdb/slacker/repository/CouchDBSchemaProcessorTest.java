@@ -16,7 +16,6 @@
 
 package com.github.luke_ed.couchdb.slacker.repository;
 
-import com.github.luke_ed.couchdb.slacker.repository.CouchDBSchemaProcessor;
 import com.github.luke_ed.couchdb.slacker.CouchDbClient;
 import com.github.luke_ed.couchdb.slacker.CouchDbContext;
 import com.github.luke_ed.couchdb.slacker.DocumentDescriptor;

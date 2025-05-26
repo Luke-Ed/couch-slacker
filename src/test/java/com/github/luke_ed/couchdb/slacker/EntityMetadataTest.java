@@ -16,8 +16,6 @@
 
 package com.github.luke_ed.couchdb.slacker;
 
-import com.github.luke_ed.couchdb.slacker.DocumentDescriptor;
-import com.github.luke_ed.couchdb.slacker.EntityMetadata;
 import com.github.luke_ed.couchdb.slacker.annotation.Document;
 import org.junit.jupiter.api.Test;
 

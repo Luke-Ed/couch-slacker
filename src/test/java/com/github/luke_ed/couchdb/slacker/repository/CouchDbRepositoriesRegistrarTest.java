@@ -17,8 +17,6 @@
 package com.github.luke_ed.couchdb.slacker.repository;
 
 import com.github.luke_ed.couchdb.slacker.annotation.EnableCouchDbRepositories;
-import com.github.luke_ed.couchdb.slacker.repository.CouchDbRepositoriesRegistrar;
-import com.github.luke_ed.couchdb.slacker.repository.CouchDbRepositoryConfigurationExtension;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

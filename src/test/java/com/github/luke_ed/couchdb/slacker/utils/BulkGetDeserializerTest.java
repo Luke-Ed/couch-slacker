@@ -20,7 +20,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.luke_ed.couchdb.slacker.structure.BulkGetResponse;
-import com.github.luke_ed.couchdb.slacker.utils.BulkGetDeserializer;
 import com.github.luke_ed.couchdb.slacker.integration.TestDocument;
 import org.junit.jupiter.api.Test;
 

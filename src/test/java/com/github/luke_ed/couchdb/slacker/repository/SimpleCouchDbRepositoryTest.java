@@ -16,7 +16,6 @@
 
 package com.github.luke_ed.couchdb.slacker.repository;
 
-import com.github.luke_ed.couchdb.slacker.repository.SimpleCouchDbRepository;
 import com.github.luke_ed.couchdb.slacker.CouchDbClient;
 import com.github.luke_ed.couchdb.slacker.exception.CouchDbException;
 import com.github.luke_ed.couchdb.slacker.exception.CouchDbRuntimeException;

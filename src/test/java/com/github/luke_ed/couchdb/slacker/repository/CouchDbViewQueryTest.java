@@ -16,7 +16,6 @@
 
 package com.github.luke_ed.couchdb.slacker.repository;
 
-import com.github.luke_ed.couchdb.slacker.repository.CouchDbViewQuery;
 import com.github.luke_ed.couchdb.slacker.CouchDbClient;
 import com.github.luke_ed.couchdb.slacker.DocumentDescriptor;
 import com.github.luke_ed.couchdb.slacker.EntityMetadata;

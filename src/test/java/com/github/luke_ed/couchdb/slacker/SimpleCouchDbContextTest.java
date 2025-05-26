@@ -16,9 +16,6 @@
 
 package com.github.luke_ed.couchdb.slacker;
 
-import com.github.luke_ed.couchdb.slacker.CouchDbClient;
-import com.github.luke_ed.couchdb.slacker.CouchDbContext;
-import com.github.luke_ed.couchdb.slacker.SimpleCouchDbContext;
 import com.github.luke_ed.couchdb.slacker.configuration.CouchDbProperties;
 import com.github.luke_ed.couchdb.slacker.integration.TestDocument;
 import org.junit.jupiter.api.Test;

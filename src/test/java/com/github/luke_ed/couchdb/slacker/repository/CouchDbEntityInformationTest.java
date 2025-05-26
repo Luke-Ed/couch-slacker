@@ -16,7 +16,6 @@
 
 package com.github.luke_ed.couchdb.slacker.repository;
 
-import com.github.luke_ed.couchdb.slacker.repository.CouchDbEntityInformation;
 import com.github.luke_ed.couchdb.slacker.EntityMetadata;
 import com.github.luke_ed.couchdb.slacker.data.Reader;
 import com.github.luke_ed.couchdb.slacker.integration.TestDocument;

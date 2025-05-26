@@ -16,9 +16,6 @@
 
 package com.github.luke_ed.couchdb.slacker.repository;
 
-import com.github.luke_ed.couchdb.slacker.repository.CouchDbQueryLookupStrategy;
-import com.github.luke_ed.couchdb.slacker.repository.CouchDbRepositoryFactory;
-import com.github.luke_ed.couchdb.slacker.repository.SimpleCouchDbRepository;
 import com.github.luke_ed.couchdb.slacker.CouchDbClient;
 import com.github.luke_ed.couchdb.slacker.configuration.CouchDbProperties;
 import com.github.luke_ed.couchdb.slacker.integration.TestDocument;

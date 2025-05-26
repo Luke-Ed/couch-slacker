@@ -16,7 +16,6 @@
 
 package com.github.luke_ed.couchdb.slacker;
 
-import com.github.luke_ed.couchdb.slacker.IdGeneratorUUID;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
