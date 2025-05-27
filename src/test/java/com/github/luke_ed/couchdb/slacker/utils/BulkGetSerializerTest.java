@@ -16,30 +16,27 @@
 
 package com.github.luke_ed.couchdb.slacker.utils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.github.luke_ed.couchdb.slacker.DocumentDescriptor;
-import com.github.luke_ed.couchdb.slacker.EntityMetadata;
 import com.github.luke_ed.couchdb.slacker.structure.BulkGetRequest;
-import com.github.luke_ed.couchdb.slacker.integration.TestDocument;
-import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 class BulkGetSerializerTest {
 
-    @Test
-    void test() throws JsonProcessingException {
-        EntityMetadata metadata = new EntityMetadata(DocumentDescriptor.of(TestDocument.class));
-        ObjectMapper localMapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        localMapper.registerModule(module);
-        assertEquals("{\"docs\":[{\"id\":\"a\"},{\"id\":\"b\"}]}",
-                localMapper.writeValueAsString(
-                        new BulkGetRequest(Arrays.asList("a", "b"))));
-    }
+  private final String docsJson = """
+        {"docs":[{"id":"a"},{"id":"b"}]}
+        """.trim();
 
+  @Test
+  void test() throws JsonProcessingException {
+    ObjectMapper localMapper = new ObjectMapper();
+    SimpleModule module = new SimpleModule();
+    localMapper.registerModule(module);
+    assertEquals(
+        docsJson, localMapper.writeValueAsString(new BulkGetRequest(Arrays.asList("a", "b"))));
+  }
 }
