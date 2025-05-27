@@ -33,6 +33,8 @@ dependencies {
     api(libs.org.springframework.boot.spring.boot.configuration.processor)
     api(libs.org.jetbrains.annotations)
     implementation(libs.io.github.oshai.kotlin.logging)
+    compileOnly(libs.org.projectlombok.lombok)
+    annotationProcessor(libs.org.projectlombok.lombok)
     testImplementation(libs.org.junit.jupiter.junit.jupiter)
     testImplementation(libs.testcontainers)
     testImplementation(libs.testcontainers.junit)
@@ -46,8 +48,8 @@ dependencies {
     testImplementation(libs.org.yaml.snakeyaml)
     testImplementation(libs.org.openjdk.jmh.jmh.core)
     testImplementation(libs.org.openjdk.jmh.jmh.generator.annprocess)
-    compileOnly(libs.org.projectlombok.lombok)
-    annotationProcessor(libs.org.projectlombok.lombok)
+    testCompileOnly(libs.org.projectlombok.lombok)
+    testAnnotationProcessor(libs.org.projectlombok.lombok)
 }
 
 group = "com.github.Luke-Ed"
