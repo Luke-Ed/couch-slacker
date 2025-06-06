@@ -5,41 +5,52 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=com.groocraft%3Acouch-slacker&metric=security_rating)](https://sonarcloud.io/dashboard?id=com.groocraft%3Acouch-slacker)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=com.groocraft%3Acouch-slacker&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=com.groocraft%3Acouch-slacker)
 [![Known Vulnerabilities](https://snyk.io/test/github/majlanky/couch-slacker/badge.svg)](https://snyk.io/test/github/majlanky/couch-slacker)  
-![](https://img.shields.io/badge/compatibility-JDK8%20and%20higher-purple)
+![](https://img.shields.io/badge/compatibility-JDK17%20and%20higher-purple)
 
-Couch Slacker project started in 2020. Basic idea and motivation was to create [Spring Data](https://spring.io/projects/spring-data) support for
+This fork of Couch Slacker is an ongoing personal project, aiming to keep the original up to date 
+with newer Spring / Springboot releases. It is also moving to fit more of my personal preferences, while
+still maintaining compatability with the spring ecosystem. The current main branch is 
+`move_to_okhttp_kotlion`. When I originally started work on that branch okhttp was still part of 
+SpringBoot's managed dependencies. As that has changed I do not intend to move to okhttp long term. 
+I've quited elements of the original read me below to make some elements clearer if they were or 
+be modified. Unquoted elements _will_ likely be modified.
+
+I'd also like to break the client into a separate gradle submodule, so that the client cen be 
+utilized without brining spring data dependencies into your project if desired. 
+
+> Couch Slacker project started in 2020. Basic idea and motivation was to create [Spring Data](https://spring.io/projects/spring-data) support for
 [CouchDB](https://couchdb.apache.org/) which is awesome and light document database. We felt in love with it because of easy clustering, nice API and good
 documentation. [Spring Data](https://spring.io/projects/spring-data) is an awesome tool how to make development faster. So we decided to join it together.
 
-#### Why to use Couch Slacker?
-Differently from other projects, Couch Slacker not only Spring Data like library. It is true [Spring Data](https://spring.io/projects/spring-data) 
+> #### Why to use Couch Slacker?
+> Differently from other projects, Couch Slacker not only Spring Data like library. It is true [Spring Data](https://spring.io/projects/spring-data) 
 implementation [CouchDB](https://couchdb.apache.org/) which makes Couch Slacker very powerful. You can start you project with Spring on 
 [CouchDB](https://couchdb.apache.org/) with Couch Slacker and switch to MongoDB or other database engine by simple change of dependency (and probably 
 some little changes in entity/POJO classes). *No massive refactorings needed.* The other reason is that developer does not need to know Couch Slacker well. 
 Knowledge of [Spring Data](https://spring.io/projects/spring-data) is enough.
 
-Simply said Couch Slacker let you relax on the [CouchDB](https://couchdb.apache.org/) as [Spring Data](https://spring.io/projects/spring-data) works for
+> Simply said Couch Slacker let you relax on the [CouchDB](https://couchdb.apache.org/) as [Spring Data](https://spring.io/projects/spring-data) works for
  you.
  
-Artifacts releases are available on maven central (and on pages indexing central):
-* [central](https://repo1.maven.org/maven2/com/groocraft/couch-slacker/)
-* [mvnRepository](https://mvnrepository.com/artifact/com.groocraft/couch-slacker)
+> Artifacts releases are available on maven central (and on pages indexing central):
+> * [central](https://repo1.maven.org/maven2/com/groocraft/couch-slacker/)
+> * [mvnRepository](https://mvnrepository.com/artifact/com.groocraft/couch-slacker)
 
-## Wiki
-This README contains only basic information about project. For more or detailed information, visit the [wiki](https://github.com/Majlanky/couch-slacker/wiki) 
+> ## Wiki
+> This README contains only basic information about project. For more or detailed information, visit the [wiki](https://github.com/Majlanky/couch-slacker/wiki) 
 
-## Project Focus
-* Provide a basic client for [CouchDB](https://couchdb.apache.org/)
-* Provide Spring data implementation for [CouchDB](https://couchdb.apache.org/)
+> ## Project Focus
+> * Provide a basic client for [CouchDB](https://couchdb.apache.org/)
+> * Provide Spring data implementation for [CouchDB](https://couchdb.apache.org/)
 
-### Basic Client Features
-* Management of documents
-* Management of indexes
+> ### Basic Client Features
+> * Management of documents
+> * Management of indexes
 
-### Spring Data Features
-* Spring data repositories for [CouchDB](https://couchdb.apache.org/)
-* Query methods
-* Native queries triggered by query methods
+> ### Spring Data Features
+> * Spring data repositories for [CouchDB](https://couchdb.apache.org/)
+> * Query methods
+> * Native queries triggered by query methods
 
 ## Getting Started 
 First of all we have to add Maven dependency
@@ -149,19 +160,22 @@ The project is still in its infancy, so there are limitations. There is a list o
 See [issues](https://github.com/Majlanky/couch-slacker/issues) what is known and when it is planned to solve it. If you need something faster than planned, **let us know**.
 
 ## Building from Source
+**Building Requires Docker**
+
 Despite the fact you can use Couch Slacker as dependency of your project as it is available on maven central, you can build the 
 project by you own. Couch Slacker is a maven project with prepared maven wrapper. Everything you need to do is call 
 the following command in the root of the project.
-```shell script
-$ ./mwnw clean install
+```sh
+$ ./gradlew clean build test
 ```
-the previous command skips integration tests. For build with integration tests use (and check wiki for integration tests information):
-```shell script
-$ ./mwnw clean install -P ITs
-```
-More information about integration tests of Couch Slacker you can find [here](https://github.com/Majlanky/couch-slacker/wiki/Integration-tests)
 
-However, every build contains integration (and junit) tests which are executed against [CouchDB](https://couchdb.apache.org/) in [Docker](https://www.docker.com/). It is reason, why
+Integration tests are run as part of the test suite, which utilize testcontainers. As a result of 
+this, docker is required for these tests to execute. Long term these tests will be split into a 
+separate integrate test suite, but I haven't embarked on that yet. 
+
+> More information about integration tests of Couch Slacker you can find [here](https://github.com/Majlanky/couch-slacker/wiki/Integration-tests)
+
+> However, every build contains integration (and junit) tests which are executed against [CouchDB](https://couchdb.apache.org/) in [Docker](https://www.docker.com/). It is reason, why
 [Docker](https://www.docker.com/) must be installed on the machine. If you do not have Docker and do not want to install it, execute the first command.
 
 ## Backward Compatibility
