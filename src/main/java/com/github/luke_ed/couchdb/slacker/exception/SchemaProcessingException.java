@@ -19,14 +19,14 @@ package com.github.luke_ed.couchdb.slacker.exception;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Exception thrown when a rule of schema processing is not fulfilled
+ * Exception thrown when a rule of com.github.luke_ed.couchdb.slacker.schema processing is not
+ * fulfilled
  *
  * @author Majlanky
  */
-public class SchemaProcessingException extends Exception{
+public class SchemaProcessingException extends Exception {
 
-    public SchemaProcessingException(@NotNull String message) {
-        super(message);
-    }
-
+  public SchemaProcessingException(@NotNull String message) {
+    super(message);
+  }
 }

@@ -16,21 +16,20 @@
 
 package com.github.luke_ed.couchdb.slacker;
 
-/**
- * Enum of strategies how to do queries.
- */
+/** Enum of strategies how to do queries. */
 public enum QueryStrategy {
 
-    /**
-     * This way all query methods are translated to mango queries and executed thru _find endpoint.
-     */
-    MANGO,
+  /**
+   * This way all query methods are translated to mango queries and executed thru _find endpoint.
+   */
+  MANGO,
 
-    /**
-     * This way all query methods are translated to javascript conditions to create a matching mapping function. If query result should be sorted, the key is
-     * created for emitted data. Performance of querying this way is much better than indexed mango but it can be really tricky because of possibly high
-     * number of views and high resources to keep the alive.
-     */
-    VIEW
-
+  /**
+   * This way all query methods are translated to javascript conditions to create a matching
+   * com.github.luke_ed.couchdb.slacker.mapping function. If query result should be sorted, the key
+   * is created for emitted data. Performance of querying this way is much better than indexed mango
+   * but it can be really tricky because of possibly high number of views and high resources to keep
+   * the alive.
+   */
+  VIEW
 }

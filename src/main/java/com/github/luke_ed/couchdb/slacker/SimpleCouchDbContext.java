@@ -18,18 +18,19 @@ package com.github.luke_ed.couchdb.slacker;
 
 import com.github.luke_ed.couchdb.slacker.configuration.CouchDbProperties;
 import com.github.luke_ed.couchdb.slacker.repository.CouchDBSchemaProcessor;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.concurrent.ThreadSafe;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.concurrent.ThreadSafe;
-import java.util.List;
-import java.util.Map;
-
 /**
- * Class which provides feature of database name context switching. There is {@link CouchDbContext#DEFAULT} context in which entities are mapped by annotations. Other
- * contexts can be added by configuration ({@link CouchDbProperties#setMapping(Map)}), {@link #add(DocumentDescriptor)} or
- * {@link #add(String, DocumentDescriptor)}. If a context added during a runtime, schema must be prepared or created by
- * {@link CouchDBSchemaProcessor#processSchema(List, SchemaOperation)}.
+ * Class which provides feature of database name context switching. There is {@link
+ * CouchDbContext#DEFAULT} context in which entities are mapped by annotations. Other contexts can
+ * be added by configuration ({@link CouchDbProperties#setMapping(Map)}), {@link
+ * #add(DocumentDescriptor)} or {@link #add(String, DocumentDescriptor)}. If a context added during
+ * a runtime, com.github.luke_ed.couchdb.slacker.schema must be prepared or created by {@link
+ * CouchDBSchemaProcessor#processSchema(List, SchemaOperation)}.
  *
  * @author Majlanky
  * @see CouchDbProperties
@@ -38,31 +39,32 @@ import java.util.Map;
 @ThreadSafe
 public class SimpleCouchDbContext extends CouchDbContext {
 
-    /**
-     * @param properties must not be {@literal null}
-     */
-    public SimpleCouchDbContext(@NotNull CouchDbProperties properties) {
-        super(properties);
-    }
+  /**
+   * @param properties must not be {@literal null}
+   */
+  public SimpleCouchDbContext(@NotNull CouchDbProperties properties) {
+    super(properties);
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized @NotNull EntityMetadata get(@NotNull Class<?> clazz) {
-        if (!contains(clazz)) {
-            log.info("Registering class {} into {} context", clazz.getName(), CouchDbContext.DEFAULT);
-            add(DocumentDescriptor.of(clazz));
-            for (String name : getCouchDbProperties().getMapping().keySet()) {
-                for (CouchDbProperties.Document d : getCouchDbProperties().getMapping().get(name)) {
-                    if (clazz.getName().equals(d.getEntityClass())) {
-                        add(name, DocumentDescriptor.of(clazz, d.getDatabase()));
-                        log.info("Class {} will be stored in {} database in {} context", d.getEntityClass(), d.getDatabase(), name);
-                    }
-                }
-            }
+  /** {@inheritDoc} */
+  @Override
+  public synchronized @NotNull EntityMetadata get(@NotNull Class<?> clazz) {
+    if (!contains(clazz)) {
+      log.info("Registering class {} into {} context", clazz.getName(), CouchDbContext.DEFAULT);
+      add(DocumentDescriptor.of(clazz));
+      for (String name : getCouchDbProperties().getMapping().keySet()) {
+        for (CouchDbProperties.Document d : getCouchDbProperties().getMapping().get(name)) {
+          if (clazz.getName().equals(d.getEntityClass())) {
+            add(name, DocumentDescriptor.of(clazz, d.getDatabase()));
+            log.info(
+                "Class {} will be stored in {} database in {} context",
+                d.getEntityClass(),
+                d.getDatabase(),
+                name);
+          }
         }
-        return super.get(clazz);
+      }
     }
-
+    return super.get(clazz);
+  }
 }

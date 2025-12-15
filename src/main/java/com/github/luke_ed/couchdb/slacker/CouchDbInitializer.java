@@ -20,20 +20,22 @@ import com.github.luke_ed.couchdb.slacker.configuration.CouchDbProperties;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Bean provides automated way how to initialize the connected CouchDB on of the {@link CouchDbInitializationStrategy}.
- * Bean should be discovered and execute the configured initialization strategy.
+ * Bean provides automated way how to initialize the connected CouchDB on of the {@link
+ * CouchDbInitializationStrategy}. Bean should be discovered and execute the configured
+ * com.github.luke_ed.couchdb.slacker.initialization strategy.
  *
  * @author Majlanky
  */
 public class CouchDbInitializer {
 
-    /**
-     * @param client     must not be {@literal null}
-     * @param properties must not be {@literal null}
-     * @throws Exception if the initialization of the selected strategy fail
-     */
-    public CouchDbInitializer(@NotNull CouchDbClient client, @NotNull CouchDbProperties properties) throws Exception {
-        properties.getInitializationStrategy().initialize(client, properties);
-    }
-
+  /**
+   * @param client must not be {@literal null}
+   * @param properties must not be {@literal null}
+   * @throws Exception if the com.github.luke_ed.couchdb.slacker.initialization of the selected
+   *     strategy fail
+   */
+  public CouchDbInitializer(@NotNull CouchDbClient client, @NotNull CouchDbProperties properties)
+      throws Exception {
+    properties.getInitializationStrategy().initialize(client, properties);
+  }
 }

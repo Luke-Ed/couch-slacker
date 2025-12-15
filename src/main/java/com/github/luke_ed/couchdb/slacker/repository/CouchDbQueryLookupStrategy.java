@@ -20,6 +20,8 @@ import com.github.luke_ed.couchdb.slacker.CouchDbClient;
 import com.github.luke_ed.couchdb.slacker.annotation.Query;
 import com.github.luke_ed.couchdb.slacker.annotation.ViewQuery;
 import com.github.luke_ed.couchdb.slacker.configuration.CouchDbProperties;
+import java.lang.reflect.Method;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.NamedQueries;
@@ -29,56 +31,73 @@ import org.springframework.data.repository.query.QueryMethod;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.util.Assert;
 
-import java.lang.reflect.Method;
-import java.util.Optional;
-
 /**
- * Implementation of {@link QueryLookupStrategy} to process (generic) method in standard Spring Data way.
+ * Implementation of {@link QueryLookupStrategy} to process (generic) method in standard Spring Data
+ * way.
  *
  * @author Majlanky
  * @see QueryLookupStrategy
  */
 public class CouchDbQueryLookupStrategy implements QueryLookupStrategy {
 
-    private final CouchDbClient client;
-    private final CouchDbProperties properties;
+  private final CouchDbClient client;
+  private final CouchDbProperties properties;
 
-    /**
-     * @param client     must not be {@literal null}.
-     * @param properties must not be {@literal null}.
-     */
-    public CouchDbQueryLookupStrategy(@NotNull CouchDbClient client, @NotNull CouchDbProperties properties) {
-        Assert.notNull(client, "Client must not be null.");
-        Assert.notNull(properties, "Properties must not be null");
-        this.client = client;
-        this.properties = properties;
-    }
+  /**
+   * @param client must not be {@literal null}.
+   * @param properties must not be {@literal null}.
+   */
+  public CouchDbQueryLookupStrategy(
+      @NotNull CouchDbClient client, @NotNull CouchDbProperties properties) {
+    Assert.notNull(client, "Client must not be null.");
+    Assert.notNull(properties, "Properties must not be null");
+    this.client = client;
+    this.properties = properties;
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("squid:S3655")// isPresent is called and mapping is null safe
-    public @NotNull RepositoryQuery resolveQuery(@NotNull Method method, @NotNull RepositoryMetadata metadata, @NotNull ProjectionFactory factory,
-                                                 @NotNull NamedQueries namedQueries) {
-        String namedQueryName = String.format("%s.%s", metadata.getDomainType().getSimpleName(), method.getName());
-        QueryMethod queryMethod = new QueryMethod(method, metadata, factory);
-        RepositoryQuery repositoryQuery;
-        Optional<ViewQuery> viewQuery = Optional.ofNullable(method.getAnnotation(ViewQuery.class));
-        if (viewQuery.isPresent()) {
-            repositoryQuery = viewQuery.map(vq -> new CouchDbViewQuery<>(client, vq, queryMethod, metadata.getDomainType())).get();
-        } else {
-            Optional<String> query;
-            if (namedQueries.hasQuery(namedQueryName)) {
-                query = Optional.of(namedQueries.getQuery(namedQueryName));
-            } else {
-                Optional<Query> queryAnnotation = Optional.ofNullable(method.getAnnotation(Query.class));
-                query = queryAnnotation.map(Query::value);
-            }
-            repositoryQuery = query.map(s -> (RepositoryQuery) new CouchDbDirectQuery(s, client, queryMethod, metadata.getDomainType()))
-                    .orElseGet(() -> new CouchDbParsingQuery<>(client, properties.isFindExecutionStats(), method, queryMethod,
-                            metadata.getDomainType()));
-        }
-        return repositoryQuery;
+  /** {@inheritDoc} */
+  @Override
+  @SuppressWarnings(
+      "squid:S3655") // isPresent is called and com.github.luke_ed.couchdb.slacker.mapping is null
+  // safe
+  public @NotNull RepositoryQuery resolveQuery(
+      @NotNull Method method,
+      @NotNull RepositoryMetadata metadata,
+      @NotNull ProjectionFactory factory,
+      @NotNull NamedQueries namedQueries) {
+    String namedQueryName =
+        String.format("%s.%s", metadata.getDomainType().getSimpleName(), method.getName());
+    QueryMethod queryMethod = new QueryMethod(method, metadata, factory);
+    RepositoryQuery repositoryQuery;
+    Optional<ViewQuery> viewQuery = Optional.ofNullable(method.getAnnotation(ViewQuery.class));
+    if (viewQuery.isPresent()) {
+      repositoryQuery =
+          viewQuery
+              .map(vq -> new CouchDbViewQuery<>(client, vq, queryMethod, metadata.getDomainType()))
+              .get();
+    } else {
+      Optional<String> query;
+      if (namedQueries.hasQuery(namedQueryName)) {
+        query = Optional.of(namedQueries.getQuery(namedQueryName));
+      } else {
+        Optional<Query> queryAnnotation = Optional.ofNullable(method.getAnnotation(Query.class));
+        query = queryAnnotation.map(Query::value);
+      }
+      repositoryQuery =
+          query
+              .map(
+                  s ->
+                      (RepositoryQuery)
+                          new CouchDbDirectQuery(s, client, queryMethod, metadata.getDomainType()))
+              .orElseGet(
+                  () ->
+                      new CouchDbParsingQuery<>(
+                          client,
+                          properties.isFindExecutionStats(),
+                          method,
+                          queryMethod,
+                          metadata.getDomainType()));
     }
+    return repositoryQuery;
+  }
 }

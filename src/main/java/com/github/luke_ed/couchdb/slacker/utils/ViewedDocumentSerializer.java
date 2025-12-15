@@ -18,10 +18,9 @@ package com.github.luke_ed.couchdb.slacker.utils;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import java.io.IOException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
-
-import java.io.IOException;
 
 /**
  * @param <EntityT> Type of entity which should be saved with type
@@ -29,27 +28,27 @@ import java.io.IOException;
  */
 public class ViewedDocumentSerializer<EntityT> extends WrappingSerializer<EntityT> {
 
-    private final String typeField;
-    private final String type;
+  private final String typeField;
+  private final String type;
 
-    /**
-     * @param clazz     of viewed entity. Must not be {@literal null}
-     * @param typeField Name of field with stores a type of the entity
-     * @param type      of the entity
-     */
-    public ViewedDocumentSerializer(@NotNull Class<EntityT> clazz, @NotNull String typeField, @NotNull String type) {
-        super(clazz);
-        Assert.hasText(typeField, "TypeField must not be null nor empty");
-        Assert.hasText(type, "Type must not be null nor empty");
-        this.typeField = typeField;
-        this.type = type;
-    }
+  /**
+   * @param clazz of com.github.luke_ed.couchdb.slacker.viewed entity. Must not be {@literal null}
+   * @param typeField Name of field with stores a type of the entity
+   * @param type of the entity
+   */
+  public ViewedDocumentSerializer(
+      @NotNull Class<EntityT> clazz, @NotNull String typeField, @NotNull String type) {
+    super(clazz);
+    Assert.hasText(typeField, "TypeField must not be null nor empty");
+    Assert.hasText(type, "Type must not be null nor empty");
+    this.typeField = typeField;
+    this.type = type;
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void serializedAdded(EntityT value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        gen.writeObjectField(typeField, type);
-    }
+  /** {@inheritDoc} */
+  @Override
+  protected void serializedAdded(EntityT value, JsonGenerator gen, SerializerProvider serializers)
+      throws IOException {
+    gen.writeObjectField(typeField, type);
+  }
 }

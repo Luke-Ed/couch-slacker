@@ -19,6 +19,11 @@ package com.github.luke_ed.couchdb.slacker;
 import com.github.luke_ed.couchdb.slacker.annotation.Document;
 import com.github.luke_ed.couchdb.slacker.configuration.CouchDbProperties;
 import com.github.luke_ed.couchdb.slacker.repository.CouchDBSchemaProcessor;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.concurrent.ThreadSafe;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,19 +36,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.Assert;
 
-import javax.annotation.concurrent.ThreadSafe;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-
 /**
- * Class which provides feature of database name context switching. There is {@link CouchDbContext#DEFAULT} context in which entities are mapped by annotations. Other
- * contexts can be added by configuration ({@link CouchDbProperties#setMapping(Map)}), {@link #add(DocumentDescriptor)} or
- * {@link #add(String, DocumentDescriptor)}. If a context added during a runtime, schema must be prepared or created by
- * {@link CouchDBSchemaProcessor#processSchema(List, SchemaOperation)}.
+ * Class which provides feature of database name context switching. There is {@link
+ * CouchDbContext#DEFAULT} context in which entities are mapped by annotations. Other contexts can
+ * be added by configuration ({@link CouchDbProperties#setMapping(Map)}), {@link
+ * #add(DocumentDescriptor)} or {@link #add(String, DocumentDescriptor)}. If a context added during
+ * a runtime, com.github.luke_ed.couchdb.slacker.schema must be prepared or created by {@link
+ * CouchDBSchemaProcessor#processSchema(List, SchemaOperation)}.
  *
  * @author Majlanky
  * @see CouchDbProperties
@@ -52,63 +51,86 @@ import java.util.stream.Collectors;
 @ThreadSafe
 public class SpringCouchDbContext extends CouchDbContext {
 
-    /**
-     * @param properties         must not be {@literal null}
-     * @param context            must not be {@literal null}
-     * @param entityScanPackages can be {@literal null} when no {@link org.springframework.boot.autoconfigure.domain.EntityScan} used.
-     * @throws ClassNotFoundException in case configuration {@link CouchDbProperties#getMapping()} contains non-existing class
-     */
-    public SpringCouchDbContext(@NotNull CouchDbProperties properties,
-                                @NotNull ApplicationContext context,
-                                @Nullable @Autowired(required = false) EntityScanPackages entityScanPackages) throws ClassNotFoundException {
-        super(properties);
-        Assert.notNull(context, "Application context must not be null");
-        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
-        provider.addIncludeFilter(new AnnotationTypeFilter(Document.class));
-        List<String> configurationPackages =
-                context.getBeansWithAnnotation(Configuration.class).values().stream().map(o -> o.getClass().getPackage().getName()).toList();
-        List<Class<?>> entityClasses = new LinkedList<>();
-        for (String pack : entityScanPackages == null ? configurationPackages : entityScanPackages.getPackageNames()) {
-            for (BeanDefinition definition : provider.findCandidateComponents(pack)) {
-                entityClasses.add(Class.forName(definition.getBeanClassName()));
-            }
-        }
-
-        register(entityClasses, properties);
+  /**
+   * @param properties must not be {@literal null}
+   * @param context must not be {@literal null}
+   * @param entityScanPackages can be {@literal null} when no {@link
+   *     org.springframework.boot.autoconfigure.domain.EntityScan} used.
+   * @throws ClassNotFoundException in case configuration {@link CouchDbProperties#getMapping()}
+   *     contains non-existing class
+   */
+  public SpringCouchDbContext(
+      @NotNull CouchDbProperties properties,
+      @NotNull ApplicationContext context,
+      @Nullable @Autowired(required = false) EntityScanPackages entityScanPackages)
+      throws ClassNotFoundException {
+    super(properties);
+    Assert.notNull(context, "Application context must not be null");
+    ClassPathScanningCandidateComponentProvider provider =
+        new ClassPathScanningCandidateComponentProvider(false);
+    provider.addIncludeFilter(new AnnotationTypeFilter(Document.class));
+    List<String> configurationPackages =
+        context.getBeansWithAnnotation(Configuration.class).values().stream()
+            .map(o -> o.getClass().getPackage().getName())
+            .toList();
+    List<Class<?>> entityClasses = new LinkedList<>();
+    for (String pack :
+        entityScanPackages == null ? configurationPackages : entityScanPackages.getPackageNames()) {
+      for (BeanDefinition definition : provider.findCandidateComponents(pack)) {
+        entityClasses.add(Class.forName(definition.getBeanClassName()));
+      }
     }
 
-    /**
-     * Method created {@link EntityMetadata} for all given {@code entityClass} and link it to the {@link CouchDbContext#DEFAULT} context. From the given {@code
-     * properties} the {@link CouchDbProperties#getMapping()} if not empty and creates configured context with the given configuration.
-     *
-     * @param entityClasses all known classes annotated by {@link Document}. Must not be {@literal null}
-     * @param properties    must not be {@literal null}
-     */
-    private void register(@NotNull List<Class<?>> entityClasses, @NotNull CouchDbProperties properties) {
-        if (entityClasses.isEmpty()) {
-            log.warn("No entities mapping found");
-        } else {
-            entityClasses.forEach(c -> log.info("Found entity mapping class {}", c.getName()));
-        }
+    register(entityClasses, properties);
+  }
 
-        Map<String, Class<?>> mapped = new HashMap<>();
-        for (Class<?> clazz : entityClasses) {
-            log.info("Registering class {} into {} context", clazz.getName(), CouchDbContext.DEFAULT);
-            mapped.put(clazz.getName(), clazz);
-            add(DocumentDescriptor.of(clazz));
-        }
-
-        log.info("{} database contexts found in configuration", properties.getMapping().size());
-
-        for (String name : properties.getMapping().keySet()) {
-            log.info("Registering entity mapping for context {}", name);
-            for (CouchDbProperties.Document d : properties.getMapping().get(name)) {
-                Class<?> entityClass = mapped.get(d.getEntityClass());
-                Assert.notNull(entityClass, "Configured class " + d.getEntityClass() + " does not exist or is not annotated by Document");
-                add(name, DocumentDescriptor.of(entityClass, d.getDatabase()));
-                log.info("Class {} will be stored in {} database in {} context", d.getEntityClass(), d.getDatabase(), name);
-            }
-        }
+  /**
+   * Method created {@link EntityMetadata} for all given {@code entityClass} and link it to the
+   * {@link CouchDbContext#DEFAULT} context. From the given {@code properties} the {@link
+   * CouchDbProperties#getMapping()} if not empty and creates configured context with the given
+   * configuration.
+   *
+   * @param entityClasses all known classes annotated by {@link Document}. Must not be {@literal
+   *     null}
+   * @param properties must not be {@literal null}
+   */
+  private void register(
+      @NotNull List<Class<?>> entityClasses, @NotNull CouchDbProperties properties) {
+    if (entityClasses.isEmpty()) {
+      log.warn("No entities com.github.luke_ed.couchdb.slacker.mapping found");
+    } else {
+      entityClasses.forEach(
+          c ->
+              log.info(
+                  "Found entity com.github.luke_ed.couchdb.slacker.mapping class {}", c.getName()));
     }
 
+    Map<String, Class<?>> mapped = new HashMap<>();
+    for (Class<?> clazz : entityClasses) {
+      log.info("Registering class {} into {} context", clazz.getName(), CouchDbContext.DEFAULT);
+      mapped.put(clazz.getName(), clazz);
+      add(DocumentDescriptor.of(clazz));
+    }
+
+    log.info("{} database contexts found in configuration", properties.getMapping().size());
+
+    for (String name : properties.getMapping().keySet()) {
+      log.info(
+          "Registering entity com.github.luke_ed.couchdb.slacker.mapping for context {}", name);
+      for (CouchDbProperties.Document d : properties.getMapping().get(name)) {
+        Class<?> entityClass = mapped.get(d.getEntityClass());
+        Assert.notNull(
+            entityClass,
+            "Configured class "
+                + d.getEntityClass()
+                + " does not exist or is not annotated by Document");
+        add(name, DocumentDescriptor.of(entityClass, d.getDatabase()));
+        log.info(
+            "Class {} will be stored in {} database in {} context",
+            d.getEntityClass(),
+            d.getDatabase(),
+            name);
+      }
+    }
+  }
 }

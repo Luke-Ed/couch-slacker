@@ -16,12 +16,14 @@
 
 package com.github.luke_ed.couchdb.slacker.repository;
 
-import com.github.luke_ed.couchdb.slacker.configuration.CouchDbProperties;
 import com.github.luke_ed.couchdb.slacker.CouchDbClient;
 import com.github.luke_ed.couchdb.slacker.CouchDbContext;
 import com.github.luke_ed.couchdb.slacker.EntityMetadata;
 import com.github.luke_ed.couchdb.slacker.SchemaOperation;
+import com.github.luke_ed.couchdb.slacker.configuration.CouchDbProperties;
 import com.github.luke_ed.couchdb.slacker.exception.SchemaProcessingException;
+import java.io.IOException;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,14 +31,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScanPackages;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
- * Class which providing schema processing, depending on the given {@link SchemaOperation}. In case of {@literal validate}, only check if all databases for all
- * known documents exists, in case of {@literal drop} all existing databases are deleted and created again, in case of create only missing databases are
- * created, the already existing are left untouched. If the operation is {@literal none}, no operation is done.
+ * Class which providing com.github.luke_ed.couchdb.slacker.schema processing, depending on the
+ * given {@link SchemaOperation}. In case of {@literal validate}, only check if all databases for
+ * all known documents exists, in case of {@literal drop} all existing databases are deleted and
+ * created again, in case of create only missing databases are created, the already existing are
+ * left untouched. If the operation is {@literal none}, no operation is done.
  *
  * @author Majlanky
  * @see CouchDbProperties
@@ -44,62 +44,72 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CouchDBSchemaProcessor {
 
-    private final CouchDbClient client;
+  private final CouchDbClient client;
 
-    /**
-     * This bean is not actually needed for anything. The main purpose is to run schema processing.
-     *
-     * @param properties         of Couch Slacker. Must not be {@literal null}
-     * @param client             must not be {@literal null}
-     * @param context            must not be {@literal null}
-     * @param entityScanPackages can be {@literal null} if not {@link org.springframework.boot.autoconfigure.domain.EntityScan} used
-     * @throws Exception when schema processing going wrong
-     */
-    public CouchDBSchemaProcessor(@NotNull CouchDbClient client,
-                                  @NotNull CouchDbProperties properties,
-                                  @NotNull CouchDbContext context,
-                                  @Nullable @Autowired(required = false) EntityScanPackages entityScanPackages) throws Exception {
-        Assert.notNull(client, "Client must not be null.");
-        Assert.notNull(properties, "SchemaOperation must not be null");
-        Assert.notNull(context, "Context must not be null");
-        this.client = client;
-        process(context, properties.getSchemaOperation());
+  /**
+   * This bean is not actually needed for anything. The main purpose is to run
+   * com.github.luke_ed.couchdb.slacker.schema processing.
+   *
+   * @param properties of Couch Slacker. Must not be {@literal null}
+   * @param client must not be {@literal null}
+   * @param context must not be {@literal null}
+   * @param entityScanPackages can be {@literal null} if not {@link
+   *     org.springframework.boot.autoconfigure.domain.EntityScan} used
+   * @throws Exception when com.github.luke_ed.couchdb.slacker.schema processing going wrong
+   */
+  public CouchDBSchemaProcessor(
+      @NotNull CouchDbClient client,
+      @NotNull CouchDbProperties properties,
+      @NotNull CouchDbContext context,
+      @Nullable @Autowired(required = false) EntityScanPackages entityScanPackages)
+      throws Exception {
+    Assert.notNull(client, "Client must not be null.");
+    Assert.notNull(properties, "SchemaOperation must not be null");
+    Assert.notNull(context, "Context must not be null");
+    this.client = client;
+    process(context, properties.getSchemaOperation());
+  }
+
+  /**
+   * Methods go thru all given classes and run the operation with databases which names are obtained
+   * from class name or annotation. What operation is done depends on {@link
+   * #CouchDBSchemaProcessor(CouchDbClient, CouchDbProperties, CouchDbContext, EntityScanPackages)}
+   * parameter. In case of {@literal validate}, only check if all databases for all known documents
+   * exists, in case of {@literal drop} all existing databases are deleted and created again, in
+   * case of create only missing databases are created, the already existing are left untouched. If
+   * the operation is {@literal none}, no operation is done.
+   *
+   * @param context must not be {@literal null}
+   * @param schemaOperation must not be {@literal null}
+   * @throws IOException if some operation to database fails
+   * @throws SchemaProcessingException if validation fails
+   */
+  public void process(@NotNull CouchDbContext context, @NotNull SchemaOperation schemaOperation)
+      throws Exception {
+    List<EntityMetadata> allMetadata =
+        context.getAll().values().stream().flatMap(m -> m.values().stream()).toList();
+    log.debug(
+        "Starting com.github.luke_ed.couchdb.slacker.schema processing with operation set to {}",
+        schemaOperation.toString().toLowerCase());
+    processSchema(allMetadata, schemaOperation);
+    log.debug("Schema processing done");
+  }
+
+  /**
+   * @param allMetadata must not be {@literal null}
+   * @param schemaOperation must not be {@literal null}
+   * @throws IOException if some operation to database fails
+   * @throws SchemaProcessingException if validation fails
+   * @see #process(CouchDbContext, SchemaOperation)
+   */
+  public void processSchema(
+      @NotNull List<EntityMetadata> allMetadata, @NotNull SchemaOperation schemaOperation)
+      throws Exception {
+    for (EntityMetadata metadata : allMetadata) {
+      schemaOperation.accept(metadata, client);
     }
-
-    /**
-     * Methods go thru all given classes and run the operation with databases which names are obtained from class name or annotation. What operation is done
-     * depends on {@link #CouchDBSchemaProcessor(CouchDbClient, CouchDbProperties, CouchDbContext, EntityScanPackages)} parameter. In case of {@literal validate}, only check if all databases for all
-     * known documents exists, in case of {@literal drop} all existing databases are deleted and created again, in case of create only missing databases are
-     * created, the already existing are left untouched. If the operation is {@literal none}, no operation is done.
-     *
-     * @param context         must not be {@literal null}
-     * @param schemaOperation must not be {@literal null}
-     * @throws IOException               if some operation to database fails
-     * @throws SchemaProcessingException if validation fails
-     */
-    public void process(@NotNull CouchDbContext context,
-                        @NotNull SchemaOperation schemaOperation) throws Exception {
-        List<EntityMetadata> allMetadata = context.getAll().values().stream().flatMap(m -> m.values().stream()).toList();
-        log.debug("Starting schema processing with operation set to {}", schemaOperation.toString().toLowerCase());
-        processSchema(allMetadata, schemaOperation);
-        log.debug("Schema processing done");
+    if (schemaOperation.hasFollowing()) {
+      processSchema(allMetadata, schemaOperation.getFollowing());
     }
-
-    /**
-     * @param allMetadata     must not be {@literal null}
-     * @param schemaOperation must not be {@literal null}
-     * @throws IOException               if some operation to database fails
-     * @throws SchemaProcessingException if validation fails
-     * @see #process(CouchDbContext, SchemaOperation)
-     */
-    public void processSchema(@NotNull List<EntityMetadata> allMetadata,
-                              @NotNull SchemaOperation schemaOperation) throws Exception {
-        for (EntityMetadata metadata : allMetadata) {
-            schemaOperation.accept(metadata, client);
-        }
-        if (schemaOperation.hasFollowing()) {
-            processSchema(allMetadata, schemaOperation.getFollowing());
-        }
-    }
-
+  }
 }
