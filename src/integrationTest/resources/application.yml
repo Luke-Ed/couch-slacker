@@ -1,0 +1,104 @@
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test-view-strategy
+couchdb:
+  client:
+    username: admin
+    password: password
+    bulk-max-size: 50
+    find-execution-stats: true
+    schema-operation: drop
+    query-strategy: view
+    initialization-strategy: single
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test-mango-strategy
+couchdb:
+  client:
+    username: admin
+    password: password
+    bulk-max-size: 50
+    find-execution-stats: true
+    schema-operation: drop
+    query-strategy: mango
+    initialization-strategy: single
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: schema-test
+couchdb:
+  client:
+    username: admin
+    password: password
+    bulk-max-size: 50
+    find-execution-stats: true
+    schema-operation: drop
+    initialization-strategy: single
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: viewed-test
+couchdb:
+  client:
+    username: admin
+    password: password
+    bulk-max-size: 50
+    find-execution-stats: true
+    schema-operation: drop
+    initialization-strategy: single
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: initialization
+couchdb:
+  client:
+    username: admin
+    password: password
+    bulk-max-size: 50
+    find-execution-stats: true
+    schema-operation: drop
+    query-strategy: view
+    initialization-strategy: cluster
+    cluster:
+      coordinator: true
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: mapping-test
+couchdb:
+  client:
+    username: admin
+    password: password
+    bulk-max-size: 50
+    find-execution-stats: true
+    schema-operation: drop
+    initialization-strategy: single
+    mapping:
+      context1:
+        - entityClass: "com.github.luke_ed.couchdb.slacker.TestDocument"
+          database: "test1"
+      context2:
+        - entityClass: "com.github.luke_ed.couchdb.slacker.TestDocument"
+          database: "test2"
+      context3:
+        - entityClass: "com.github.luke_ed.couchdb.slacker.TestDocument"
+          database: "test3"

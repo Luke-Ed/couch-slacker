@@ -7,6 +7,7 @@ plugins {
     id("com.diffplug.spotless")
     id("com.github.ben-manes.versions")
     kotlin("jvm")
+    `jvm-test-suite`
 }
 
 repositories {
@@ -36,10 +37,9 @@ dependencies {
     compileOnly(libs.org.projectlombok.lombok)
     annotationProcessor(libs.org.projectlombok.lombok)
     testImplementation(libs.org.junit.jupiter.junit.jupiter)
-    testImplementation(libs.testcontainers)
-    testImplementation(libs.testcontainers.junit)
-    testImplementation(libs.spring.boot.testcontainers)
     testImplementation(libs.mockito)
+    testImplementation(libs.hamcrest)
+    testImplementation(libs.hamcrest.core)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.commons.io.commons.io)
     testImplementation(libs.org.springframework.boot.spring.boot.test)
@@ -118,5 +118,43 @@ spotless {
         indentWithSpaces(2)
         trimTrailingWhitespace()
         endWithNewline()
+    }
+}
+
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+        }
+
+        register<JvmTestSuite>("integrationTest") {
+            useJUnitJupiter()
+            sources {
+                java {
+                    setSrcDirs(listOf("src/integrationTest/java"))
+                }
+            }
+            dependencies {
+                implementation(project())
+                implementation(libs.org.junit.jupiter.junit.jupiter)
+                implementation(libs.org.springframework.data.spring.data.commons)
+                implementation(libs.org.springframework.spring.test)
+                implementation(libs.org.springframework.boot.spring.boot.test)
+                implementation(libs.testcontainers)
+                implementation(libs.testcontainers.junit)
+                implementation(libs.spring.boot.testcontainers)
+                implementation(libs.org.yaml.snakeyaml)
+                implementation(libs.ch.qos.logback.logback.classic)
+                compileOnly(libs.org.projectlombok.lombok)
+                annotationProcessor(libs.org.projectlombok.lombok)
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        environment("api.version", "1.44")
+                    }
+                }
+            }
+        }
     }
 }
