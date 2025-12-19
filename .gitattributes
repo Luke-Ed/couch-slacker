@@ -1,0 +1,9 @@
+# Default everything to LF
+*       text eol=lf
+
+# Windows Files
+# .bat files will always be windows files, and should use windows file endings
+*.bat   text eol=clrf
+
+# Binary File Types
+*.jar   binary
