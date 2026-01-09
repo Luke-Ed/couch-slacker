@@ -33,6 +33,7 @@ dependencies {
     api(libs.spotbugs.annotations)
     api(libs.org.springframework.boot.spring.boot.configuration.processor)
     api(libs.org.jetbrains.annotations)
+    implementation(libs.spring.web)
     implementation(libs.io.github.oshai.kotlin.logging)
     compileOnly(libs.org.projectlombok.lombok)
     annotationProcessor(libs.org.projectlombok.lombok)

@@ -9,19 +9,23 @@ import com.github.luke_ed.couchdb.slacker.structure.DocumentPutResponse
 import com.github.luke_ed.couchdb.slacker.utils.ThrowingFunction
 import com.github.luke_ed.couchdb.slacker.utils.ViewedDocumentSerializer
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.http.HttpHeaders
 import java.io.IOException
 import java.net.URI
 import java.util.function.Consumer
 import java.util.stream.Collectors
-import okhttp3.*
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
+import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
+import org.springframework.http.client.ClientHttpRequestFactory
+import org.springframework.http.client.ClientHttpRequestInitializer
+import org.springframework.http.client.ClientHttpResponse
+import org.springframework.web.util.UriComponents
+import org.springframework.web.util.UriComponentsBuilder
 
 class CouchDbClientKt
 internal constructor(
-  okHttpClient: OkHttpClient,
-  address: Address,
+  private val requestFactory: ClientHttpRequestFactory,
+  private val baseUrl: String,
   idGenerators: Iterable<IdGenerator<Any>>,
   defaultShards: Int,
   defaultReplicas: Int,
@@ -29,12 +33,9 @@ internal constructor(
   bulkMaxSize: Int,
   queryStrategy: QueryStrategy,
   objectMapper: ObjectMapper,
-  couchDbContext: CouchDbContext,
-  httpUrl: HttpUrl
+  couchDbContext: CouchDbContext
 ) {
-  private val okHttpClient: OkHttpClient
-  private val address: Address
-  private val idGenerators: MutableMap<Class<*>, IdGenerator<*>>
+  private val idGenerators: MutableMap<Class<*>, IdGenerator<*>> = HashMap()
   private val defaultShards: Int
   private val defaultReplicas: Int
   private val defaultPartitioned: Boolean
@@ -45,15 +46,11 @@ internal constructor(
   private val knownIndices: Set<String>
   private val knownSortedViews: Set<String>
   private val defaultIdGenerator: IdGenerator<*>
-  private val jsonMediaType: MediaType = "application/json".toMediaType()
-  private val baseHttpUrl: HttpUrl
+  private val jsonMediaType: MediaType = MediaType.APPLICATION_JSON
 
   private val logger = KotlinLogging.logger {}
 
   init {
-    this.okHttpClient = okHttpClient
-    this.address = address
-    this.idGenerators = HashMap()
     idGenerators.forEach(
       Consumer { generator: IdGenerator<*> -> this.idGenerators[generator.entityClass] = generator }
     )
@@ -70,7 +67,6 @@ internal constructor(
     this.knownIndices = HashSet()
     this.knownSortedViews = HashSet()
     this.defaultIdGenerator = IdGeneratorUUID()
-    this.baseHttpUrl = httpUrl
   }
 
   fun <T> getEntityMetadata(clazz: Class<T>): EntityMetadata {
@@ -91,30 +87,21 @@ internal constructor(
     return getEntityMetadata(clazz).databaseName
   }
 
-  private fun getHttpUrl(base: URI, vararg pathSegments: String): HttpUrl {
-    val baseUrl = base.toHttpUrlOrNull()
-    requireNotNull(baseUrl) { "URI: $base, had a protocol other than http, or https" }
-    val builder = baseUrl.newBuilder()
-    pathSegments.forEach { builder.addPathSegment(it) }
-    return builder.build()
+  private fun getHttpUrl(base: URI, vararg pathSegments: String): UriComponents {
+    return UriComponentsBuilder.fromUri(base).pathSegment(*pathSegments).build()
   }
 
-  private fun getHttpUrl(base: HttpUrl, vararg pathSegments: String): HttpUrl {
-    val builder = base.newBuilder()
-    pathSegments.forEach { builder.addPathSegment(it) }
-    return builder.build()
+  private fun getHttpUrl(base: String, vararg pathSegments: String): UriComponents {
+    return UriComponentsBuilder.fromHttpUrl(base).pathSegment(*pathSegments).build()
   }
 
   private fun getHttpUrl(
     base: URI,
     pathSegments: List<String>,
     parameters: Map<String, String>
-  ): HttpUrl {
-    val baseUrl = base.toHttpUrlOrNull()
-    requireNotNull(baseUrl) { "URI: $base, had a protocol other than http, or https" }
-    val builder = baseUrl.newBuilder()
-    pathSegments.forEach { builder.addPathSegment(it) }
-    parameters.forEach { builder.addQueryParameter(it.key, it.value) }
+  ): UriComponents {
+    val builder = UriComponentsBuilder.fromUri(base).pathSegment(*pathSegments.toTypedArray())
+    parameters.forEach { (k, v) -> builder.queryParam(k, v) }
     return builder.build()
   }
 
@@ -132,23 +119,33 @@ internal constructor(
   }
 
   private fun <DataT> put(
-    httpUrl: HttpUrl,
+    uriComponents: UriComponents,
     json: String,
-    responseProcessor: ThrowingFunction<Response, DataT, IOException>
+    responseProcessor: ThrowingFunction<ClientHttpResponse, DataT, IOException>
   ): DataT {
-    val request = Request.Builder().url(httpUrl).put(json.toRequestBody(jsonMediaType)).build()
-    val response = okHttpClient.newCall(request).execute()
-    return responseProcessor.apply(response)
+    val request = requestFactory.createRequest(uriComponents.toUri(), HttpMethod.PUT)
+    val headers = request.headers
+    headers[HttpHeaders.CONTENT_TYPE] =  jsonMediaType.toString()
+    request.body.use { body -> body.write(json.toByteArray()) }
+
+    request.execute().use { response ->
+      return responseProcessor.apply(response)
+    }
   }
 
   private fun <DataT> post(
-    httpUrl: HttpUrl,
+    uriComponents: UriComponents,
     json: String,
-    responseProcessor: ThrowingFunction<Response, DataT, IOException>
+    responseProcessor: ThrowingFunction<ClientHttpResponse, DataT, IOException>
   ): DataT {
-    val request = Request.Builder().url(httpUrl).post(json.toRequestBody(jsonMediaType)).build()
-    val response = okHttpClient.newCall(request).execute()
-    return responseProcessor.apply(response)
+    val request = requestFactory.createRequest(uriComponents.toUri(), HttpMethod.POST)
+
+    request.headers.contentType = jsonMediaType
+    request.body.use { body -> body.write(json.toByteArray()) }
+
+    request.execute().use { response ->
+      return responseProcessor.apply(response)
+    }
   }
 
   fun <EntityT : Any> save(entity: EntityT): EntityT {
@@ -166,14 +163,14 @@ internal constructor(
 
     val response: DocumentPutResponse =
       put(
-        getHttpUrl(baseHttpUrl, entityMetadata.databaseName, id),
+        getHttpUrl(baseUrl, entityMetadata.databaseName, id),
         localMapper.writeValueAsString(entity),
       ) { response ->
-        objectMapper.readValue<DocumentPutResponse>(response.body.toString())
+        objectMapper.readValue<DocumentPutResponse>(response.body)
       }
 
     entityMetadata.revisionWriter.write(entity, response.rev)
-    entityMetadata.idWriter.write(id, response.id)
+    entityMetadata.idWriter.write(entity, response.id)
     logger.debug { "Saved document $entity with id ${response.id} and revision ${response.rev}" }
     return entity
   }
@@ -199,7 +196,7 @@ internal constructor(
 
     val responses =
       post(
-        getHttpUrl(baseHttpUrl, entityMetadata.databaseName, "_bulk_docs"),
+        getHttpUrl(baseUrl, entityMetadata.databaseName, "_bulk_docs"),
         localMapper.writeValueAsString(BulkRequest(entities))
       ) { response ->
         objectMapper.readValue<List<DocumentPutResponse>>(
