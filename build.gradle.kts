@@ -25,19 +25,19 @@ dependencies {
     api(libs.org.apache.httpcomponents.httpclient)
     api(libs.com.squareup.okhttp3.okhttp)
     api(libs.commons.codec.commons.codec)
-    api(libs.com.fasterxml.jackson.core.jackson.core)
-    api(libs.com.fasterxml.jackson.core.jackson.annotations)
-    api(libs.com.fasterxml.jackson.core.jackson.databind)
-    api(libs.com.fasterxml.jackson.module.jackson.module.kotlin)
-    api(libs.org.hibernate.validator.hibernate.validator)
+    api(libs.jackson.core)
+    api(libs.jackson.annotations)
+    api(libs.jackson.databind)
+    api(libs.jackson.module.kotlin)
+    api(libs.hibernate.validator)
     api(libs.spotbugs.annotations)
     api(libs.org.springframework.boot.spring.boot.configuration.processor)
     api(libs.org.jetbrains.annotations)
     implementation(libs.spring.web)
-    implementation(libs.io.github.oshai.kotlin.logging)
-    compileOnly(libs.org.projectlombok.lombok)
-    annotationProcessor(libs.org.projectlombok.lombok)
-    testImplementation(libs.org.junit.jupiter.junit.jupiter)
+    implementation(libs.oshai.kotlin.logging)
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+    testImplementation(libs.junit.jupiter)
     testImplementation(libs.mockito)
     testImplementation(libs.hamcrest)
     testImplementation(libs.hamcrest.core)
@@ -45,12 +45,12 @@ dependencies {
     testImplementation(libs.commons.io.commons.io)
     testImplementation(libs.org.springframework.boot.spring.boot.test)
     testImplementation(libs.org.springframework.spring.test)
-    testImplementation(libs.ch.qos.logback.logback.classic)
-    testImplementation(libs.org.yaml.snakeyaml)
+    testImplementation(libs.logback.classic)
+    testImplementation(libs.snakeyaml)
     testImplementation(libs.org.openjdk.jmh.jmh.core)
     testImplementation(libs.org.openjdk.jmh.jmh.generator.annprocess)
-    testCompileOnly(libs.org.projectlombok.lombok)
-    testAnnotationProcessor(libs.org.projectlombok.lombok)
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
 }
 
 group = "com.github.Luke-Ed"
@@ -122,6 +122,9 @@ spotless {
     }
 }
 
+// Despite the fact that it's incubating the jvm-test-suites plugin is useful, and to avoid having tons of warnings
+// simply because it's being used I'm supressing the warning.
+@Suppress("UnstableApiUsage")
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
@@ -137,17 +140,17 @@ testing {
             }
             dependencies {
                 implementation(project())
-                implementation(libs.org.junit.jupiter.junit.jupiter)
+                implementation(libs.junit.jupiter)
                 implementation(libs.org.springframework.data.spring.data.commons)
                 implementation(libs.org.springframework.spring.test)
                 implementation(libs.org.springframework.boot.spring.boot.test)
                 implementation(libs.testcontainers)
                 implementation(libs.testcontainers.junit)
                 implementation(libs.spring.boot.testcontainers)
-                implementation(libs.org.yaml.snakeyaml)
-                implementation(libs.ch.qos.logback.logback.classic)
-                compileOnly(libs.org.projectlombok.lombok)
-                annotationProcessor(libs.org.projectlombok.lombok)
+                implementation(libs.snakeyaml)
+                implementation(libs.logback.classic)
+                compileOnly(libs.lombok)
+                annotationProcessor(libs.lombok)
             }
             targets {
                 all {

@@ -1,46 +1,46 @@
 [versions]
-ch-qos-logback-logback-classic = "1.5.18"
-com-fasterxml-jackson-version = "2.17.3"
+logback = "1.5.18"
+jackson = "2.17.3"
 spotbugs = "4.8.3"
 com-squareup-okhttp3 = "4.12.0"
 commons-codec-commons-codec = "1.16.1"
 commons-io-commons-io = "2.16.1"
-io-github-oshai-kotlin-logging = "7.0.0"
+oshai-kotlin-logging = "7.0.0"
 org-apache-httpcomponents-httpclient = "4.5.13"
-org-hibernate-validator-hibernate-validator = "8.0.1.Final"
+hibernate-validator = "8.0.2.Final"
 org-jetbrains-annotations = "24.1.0"
-org-junit-jupiter-junit-jupiter = "5.10.2"
+junit-jupiter = "5.10.5"
 mockito = "5.11.0"
 mockito-kotlin = "5.3.1"
 org-openjdk-jmh-jmh-core = "1.37"
 org-openjdk-jmh-jmh-generator-annprocess = "1.37"
-org-projectlombok-lombok = "1.18.32"
-spring-boot = "3.3.12"
-spring-core = "6.1.20"
+lombok = "1.18.38"
+spring-boot = "3.3.13"
+spring-core = "6.1.21"
 testcontainers = "1.19.8"
-org-yaml-snakeyaml = "2.2"
+snakeyaml = "2.2"
 hamcrest = "2.2"
 
 [libraries]
-ch-qos-logback-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "ch-qos-logback-logback-classic" }
-com-fasterxml-jackson-core-jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "com-fasterxml-jackson-version" }
-com-fasterxml-jackson-core-jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "com-fasterxml-jackson-version" }
-com-fasterxml-jackson-core-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "com-fasterxml-jackson-version" }
-com-fasterxml-jackson-module-jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "com-fasterxml-jackson-version" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 spotbugs-annotations = { module = "com.github.spotbugs:spotbugs-annotations", version.ref = "spotbugs"}
 com-squareup-okhttp3-okhttp =  { module = "com.squareup.okhttp3:okhttp", version.ref = "com-squareup-okhttp3" }
-io-github-oshai-kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "io-github-oshai-kotlin-logging" }
+oshai-kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "oshai-kotlin-logging" }
 commons-codec-commons-codec = { module = "commons-codec:commons-codec", version.ref = "commons-codec-commons-codec" }
 commons-io-commons-io = { module = "commons-io:commons-io", version.ref = "commons-io-commons-io" }
 org-apache-httpcomponents-httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "org-apache-httpcomponents-httpclient" }
-org-hibernate-validator-hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "org-hibernate-validator-hibernate-validator" }
+hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernate-validator" }
 org-jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "org-jetbrains-annotations" }
-org-junit-jupiter-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "org-junit-jupiter-junit-jupiter" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
 mockito = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
 org-openjdk-jmh-jmh-core = { module = "org.openjdk.jmh:jmh-core", version.ref = "org-openjdk-jmh-jmh-core" }
 org-openjdk-jmh-jmh-generator-annprocess = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "org-openjdk-jmh-jmh-generator-annprocess" }
-org-projectlombok-lombok = { module = "org.projectlombok:lombok", version.ref = "org-projectlombok-lombok" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 org-springframework-boot-spring-boot = { module = "org.springframework.boot:spring-boot", version.ref = "spring-boot" }
 org-springframework-boot-spring-boot-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref = "spring-boot" }
 org-springframework-boot-spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor", version.ref = "spring-boot" }
@@ -51,7 +51,7 @@ org-springframework-spring-context = { module = "org.springframework:spring-cont
 org-springframework-spring-test = { module = "org.springframework:spring-test", version.ref = "spring-core" }
 org-springframework-spring-tx = { module = "org.springframework:spring-tx", version.ref = "spring-core" }
 spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers", version.ref = "spring-boot" }
-org-yaml-snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "org-yaml-snakeyaml" }
+snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-junit = { module = "org.testcontainers:junit-jupiter", version.ref ="testcontainers" }
 hamcrest = { module = "org.hamcrest:hamcrest", version.ref = "hamcrest" }
