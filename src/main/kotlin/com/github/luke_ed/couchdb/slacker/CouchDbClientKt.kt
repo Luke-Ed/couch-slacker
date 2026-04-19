@@ -4,20 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.luke_ed.couchdb.slacker.repository.CouchDbEntityInformation
 import com.github.luke_ed.couchdb.slacker.structure.BulkRequest
 import com.github.luke_ed.couchdb.slacker.structure.DocumentPutResponse
 import com.github.luke_ed.couchdb.slacker.utils.ThrowingFunction
 import com.github.luke_ed.couchdb.slacker.utils.ViewedDocumentSerializer
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.springframework.http.HttpHeaders
 import java.io.IOException
 import java.net.URI
 import java.util.function.Consumer
 import java.util.stream.Collectors
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.http.client.ClientHttpRequestFactory
-import org.springframework.http.client.ClientHttpRequestInitializer
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.web.util.UriComponents
 import org.springframework.web.util.UriComponentsBuilder
@@ -73,6 +73,12 @@ internal constructor(
     return couchDbContext[clazz]
   }
 
+  fun <EntityT : Any, IdT : Any> getEntityInformation(
+    clazz: Class<EntityT>
+  ): CouchDbEntityInformation<EntityT, IdT> {
+    return CouchDbEntityInformation<EntityT, IdT>(clazz, getEntityMetadata(clazz))
+  }
+
   private fun <EntityT : Any> generateId(entity: EntityT, clazz: Class<EntityT>): String {
     val idGenerator =
       idGenerators.computeIfAbsent(clazz) { defaultIdGenerator } as? IdGenerator<EntityT>
@@ -125,7 +131,7 @@ internal constructor(
   ): DataT {
     val request = requestFactory.createRequest(uriComponents.toUri(), HttpMethod.PUT)
     val headers = request.headers
-    headers[HttpHeaders.CONTENT_TYPE] =  jsonMediaType.toString()
+    headers[HttpHeaders.CONTENT_TYPE] = jsonMediaType.toString()
     request.body.use { body -> body.write(json.toByteArray()) }
 
     request.execute().use { response ->
