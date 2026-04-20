@@ -173,4 +173,90 @@ class CouchDbClientKtTest {
       "Client should not modify original exception when thrown"
     )
   }
+
+  @Test
+  fun testSaveAll() {
+    val thrownException = IOException("error")
+    val content =
+      """[{"id": "a", "ok": true, "rev": "rev1"},{"id": "b", "ok": true, "rev": "rev1"}]"""
+        .byteInputStream()
+
+    val mResponse: ClientHttpResponse = mock { on { body } doReturn content }
+
+    var capturedRequest: ClientHttpRequest? = null
+
+    whenever(requestFactory.createRequest(any(), any()))
+      .thenAnswer { invocationOnMock ->
+        val uri = invocationOnMock.arguments[0] as URI
+        val method = invocationOnMock.arguments[1] as HttpMethod
+        val realRequest = SimpleClientHttpRequestFactory().createRequest(uri, method)
+        SpyClientHttpRequest(realRequest, mResponse).also { capturedRequest = it }
+      }
+      .thenAnswer { invocationOnMock ->
+        val uri = invocationOnMock.arguments[0] as URI
+        val method = invocationOnMock.arguments[1] as HttpMethod
+        val realRequest = SimpleClientHttpRequestFactory().createRequest(uri, method)
+        SpyClientHttpRequest(realRequest, executeThrows = thrownException).also {
+          capturedRequest = it
+        }
+      }
+
+    whenever(dbContext[TestDocument::class.java])
+      .doReturn(EntityMetadata(DocumentDescriptor.of(TestDocument::class.java)))
+
+    val documentA = TestDocument("a", null, "a", "a")
+    val documentB = TestDocument("b", null, "b", "b")
+
+    val savedDocuments =
+      couchDbClientKt.saveAll(listOf(documentA, documentB), TestDocument::class.java)
+
+    assertNotNull(capturedRequest, "Request must be captured to continue testing")
+
+    val request: SpyClientHttpRequest = capturedRequest!! as SpyClientHttpRequest
+
+    assertEquals(HttpMethod.POST, request.method, "saveAll must use HTTP POST")
+    assertEquals(
+      "$baseUrl/test/_bulk_docs",
+      request.uri.toString(),
+      "URI must be baseURI + databaseName + _bulk_docs"
+    )
+    assertEquals(
+      MediaType.APPLICATION_JSON,
+      request.headers.contentType,
+      "Content-Type must be json"
+    )
+    assertEquals(
+      """{"docs":[{"_id":"a","value":"a","value2":"a","value3":null,"value4":null,"value5":false},{"_id":"b","value":"b","value2":"b","value3":null,"value4":null,"value5":false}]}""",
+      request.getCapturedBody(),
+      "Body of save request was not properly created"
+    )
+    assertEquals(2, savedDocuments.count())
+
+    verify(mResponse, times(1)).close()
+
+    assertEquals(
+      "aaa",
+      "${documentA.id}${documentA.value}${documentA.value2}",
+      "Document id nor values cannot be changed"
+    )
+    assertEquals(
+      "bbb",
+      "${documentB.id}${documentB.value}${documentB.value2}",
+      "Document id nor values cannot be changed"
+    )
+
+    assertEquals("rev1", documentA.revision, "Revision must be updated by given revision")
+    assertEquals("rev1", documentB.revision, "Revision must be updated by given revision")
+
+    assertEquals(
+      thrownException,
+      assertThrows<IOException> {
+        couchDbClientKt.saveAll(
+          listOf(TestDocument("a", "b"), TestDocument("b", "b")),
+          TestDocument::class.java
+        )
+      },
+      "Client should not modify original exception when thrown"
+    )
+  }
 }
