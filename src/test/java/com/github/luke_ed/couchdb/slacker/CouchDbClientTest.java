@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// spotless:off
+
 package com.github.luke_ed.couchdb.slacker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -184,7 +186,7 @@ class CouchDbClientTest {
         Iterable<TestDocument> saved = client.saveAll(Arrays.asList(a, b), TestDocument.class);
 
         HttpRequest request = requestCaptor.getValue();
-        assertEquals(HttpPost.class, request.getClass(), "Save has to be done as PUT request");
+        assertEquals(HttpPost.class, request.getClass(), "Save has to be done as POST request");
         HttpPost post = (HttpPost) request;
         assertEquals("http://localhost:5984/test/_bulk_docs", post.getURI().toString(), "URI must be based on base URI and database name");
         assertEquals("application/json", post.getEntity().getContentType().getValue(), "Content type must be set to json");
@@ -780,3 +782,5 @@ class CouchDbClientTest {
     }
 
 }
+
+// spotless:on
