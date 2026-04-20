@@ -79,13 +79,21 @@ internal constructor(
     return CouchDbEntityInformation<EntityT, IdT>(clazz, getEntityMetadata(clazz))
   }
 
+  /**
+   * Generate an id for an incoming document based on its type. If it has a known type generator use
+   * that generator, else fall back to the default generator.
+   *
+   * This method specifically suppresses unchecked cast warnings. This is intentionally done as the
+   * type erasure causes an unchecked cast. This cast should be safe however, or it will end up
+   * throwing.
+   */
+  @Suppress("squid:S6530", "UNCHECKED_CAST")
   private fun <EntityT : Any> generateId(entity: EntityT, clazz: Class<EntityT>): String {
     val idGenerator =
       idGenerators.computeIfAbsent(clazz) { defaultIdGenerator } as? IdGenerator<EntityT>
         ?: throw IllegalStateException(
           "Expected IdGenerator for type ${clazz.simpleName}, but found ${idGenerators[clazz]?.javaClass?.simpleName}"
         )
-
     return idGenerator.generate(entity)
   }
 
@@ -205,13 +213,7 @@ internal constructor(
         getHttpUrl(baseUrl, entityMetadata.databaseName, "_bulk_docs"),
         localMapper.writeValueAsString(BulkRequest(entities))
       ) { response ->
-        objectMapper.readValue<List<DocumentPutResponse>>(
-          response.body.toString(),
-          objectMapper.typeFactory.constructCollectionType(
-            List::class.java,
-            DocumentPutResponse::class.java
-          )
-        )
+        objectMapper.readValue<List<DocumentPutResponse>>(response.body)
       }
     val indexedResponses: Map<String, DocumentPutResponse> =
       responses.stream().collect(Collectors.toMap(DocumentPutResponse::getId) { it })
