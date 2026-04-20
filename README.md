@@ -15,7 +15,7 @@ SpringBoot's managed dependencies. As that has changed I do not intend to move t
 I've quited elements of the original read me below to make some elements clearer if they were or 
 be modified. Unquoted elements _will_ likely be modified.
 
-I'd also like to break the client into a separate gradle submodule, so that the client cen be 
+I'd also like to break the client into a separate Gradle submodule, so that the client cen be 
 utilized without brining spring data dependencies into your project if desired. 
 
 > Couch Slacker project started in 2020. Basic idea and motivation was to create [Spring Data](https://spring.io/projects/spring-data) support for

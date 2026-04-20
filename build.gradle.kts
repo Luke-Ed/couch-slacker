@@ -7,6 +7,7 @@ plugins {
     id("com.diffplug.spotless")
     id("com.github.ben-manes.versions")
     kotlin("jvm")
+    kotlin("plugin.lombok")
     `jvm-test-suite`
 }
 
@@ -112,6 +113,7 @@ spotless {
         indentWithSpaces(2)
         trimTrailingWhitespace()
         endWithNewline()
+        toggleOffOn()
     }
 
     kotlin {
